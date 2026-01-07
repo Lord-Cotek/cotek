@@ -12,19 +12,26 @@ const TARGETS = [
 
 async function ping(url: string) {
   const start = Date.now();
+
   try {
-    // HEAD is lighter; some sites don’t support it properly, so we fallback to GET.
-    let res = await fetch(url, { method: "HEAD", cache: "no-store" });
-    if (!res.ok) {
-      res = await fetch(url, { method: "GET", cache: "no-store" });
-    }
+    // We allow redirects. Many auth-protected apps will redirect to /login (307/302).
+    const res = await fetch(url, {
+      method: "GET",
+      cache: "no-store",
+      redirect: "manual", // IMPORTANT: we want to see the 3xx code, not follow it
+    });
+
     const ms = Date.now() - start;
+
+    const status = res.status;
+    const healthy = status >= 200 && status < 400; // ✅ 2xx and 3xx are OK
+
     return {
-      ok: res.ok,
-      status: res.status,
+      ok: healthy,
+      status,
       ms,
     };
-  } catch (e) {
+  } catch {
     const ms = Date.now() - start;
     return {
       ok: false,
