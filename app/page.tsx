@@ -44,6 +44,19 @@ const APPS: AppCard[] = [
   },
 ];
 
+type StatusRow = {
+  key: "BMS" | "HR" | "FIN";
+  url: string;
+  ok: boolean;
+  status: number;
+  ms: number;
+};
+
+type StatusPayload = {
+  checkedAt: string;
+  results: StatusRow[];
+};
+
 function Icon({ kind }: { kind: "bms" | "hr" | "fin" }) {
   if (kind === "bms") {
     return (
@@ -127,11 +140,42 @@ function useToast() {
   return { msg, setMsg };
 }
 
+function statusLabel(s?: StatusRow) {
+  if (!s) return { text: "Checking…", cls: "st-wait" };
+  if (s.ok) return { text: `Online • ${s.ms}ms`, cls: "st-ok" };
+  if (s.status) return { text: `Degraded • ${s.status}`, cls: "st-warn" };
+  return { text: "Offline", cls: "st-bad" };
+}
+
 export default function Home() {
   const { msg, setMsg } = useToast();
 
   const linksText = useMemo(() => {
     return APPS.map((a) => `${a.name}: ${a.url}`).join("\n");
+  }, []);
+
+  const [status, setStatus] = useState<Record<string, StatusRow | undefined>>(
+    {}
+  );
+  const [checkedAt, setCheckedAt] = useState<string>("");
+
+  const fetchStatus = async () => {
+    try {
+      const res = await fetch("/api/status", { cache: "no-store" });
+      const data = (await res.json()) as StatusPayload;
+      const map: Record<string, StatusRow> = {};
+      data.results.forEach((r) => (map[r.key] = r));
+      setStatus(map);
+      setCheckedAt(data.checkedAt);
+    } catch {
+      // leave as-is
+    }
+  };
+
+  useEffect(() => {
+    fetchStatus();
+    const t = setInterval(fetchStatus, 60_000); // every minute
+    return () => clearInterval(t);
   }, []);
 
   // Keyboard shortcuts: 1,2,3
@@ -141,6 +185,7 @@ export default function Home() {
       if (e.key === "1") window.open(APPS[0].url, "_blank", "noreferrer");
       if (e.key === "2") window.open(APPS[1].url, "_blank", "noreferrer");
       if (e.key === "3") window.open(APPS[2].url, "_blank", "noreferrer");
+      if (e.key.toLowerCase() === "r") fetchStatus(); // quick refresh
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -159,6 +204,10 @@ export default function Home() {
       setMsg("Could not copy (browser blocked)");
     }
   };
+
+  const checkedLabel = checkedAt
+    ? new Date(checkedAt).toLocaleString()
+    : "—";
 
   return (
     <main className="page">
@@ -182,7 +231,6 @@ export default function Home() {
           </div>
 
           <div className="header-actions">
-            {/* ✅ Updated email */}
             <a className="chip" href="mailto:tcotek@amrome.com">
               Need access?
             </a>
@@ -192,7 +240,6 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Quick actions */}
         <section className="quick fade-in">
           <button className="qbtn" onClick={openAll} type="button">
             Open all apps
@@ -202,6 +249,11 @@ export default function Home() {
             Copy links
             <span className="kbd">⌘</span>
           </button>
+          <button className="qbtn qbtn-ghost" onClick={fetchStatus} type="button">
+            Refresh status
+            <span className="kbd">R</span>
+          </button>
+
           <div className="qhint">
             Shortcuts: <span className="kbd">1</span> BMS{" "}
             <span className="kbd">2</span> HR <span className="kbd">3</span> FIN
@@ -248,10 +300,10 @@ export default function Home() {
             </div>
             <div className="dash-meta">
               <div className="meta-row">
-                <span className="meta-dot" /> Vercel hosted
+                <span className="meta-dot" /> Checked: {checkedLabel}
               </div>
               <div className="meta-row">
-                <span className="meta-dot" /> Global edge delivery
+                <span className="meta-dot" /> Press <span className="kbd">R</span> to refresh
               </div>
             </div>
           </div>
@@ -261,6 +313,11 @@ export default function Home() {
           {APPS.map((app) => {
             const kind =
               app.name === "BMS" ? "bms" : app.name === "HR" ? "hr" : "fin";
+
+            const row =
+              status[app.name as "BMS" | "HR" | "FIN"] ??
+              status[app.name.toUpperCase()];
+            const st = statusLabel(row);
 
             return (
               <Link
@@ -285,6 +342,12 @@ export default function Home() {
                   <div className="app-title-row">
                     <h2 className="app-title">{app.name}</h2>
                     <span className="open-pill">Open</span>
+                  </div>
+
+                  {/* status badge */}
+                  <div className={`status-pill ${st.cls}`}>
+                    <span className="st-dot" />
+                    {st.text}
                   </div>
 
                   <p className="app-desc">{app.short}</p>
@@ -315,7 +378,6 @@ export default function Home() {
         </footer>
       </div>
 
-      {/* toast */}
       <div className={`toast ${msg ? "toast-show" : ""}`} aria-live="polite">
         {msg ?? ""}
       </div>

@@ -583,3 +583,52 @@ body {
     width: 100%;
   }
 }
+/* --- Status badge --- */
+.status-pill {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.status-pill .st-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.06);
+}
+
+.st-ok {
+  border-color: rgba(0, 245, 212, 0.25);
+}
+.st-ok .st-dot {
+  background: rgba(0, 245, 212, 0.9);
+  box-shadow: 0 0 0 6px rgba(0, 245, 212, 0.12);
+}
+
+.st-warn {
+  border-color: rgba(255, 190, 11, 0.26);
+}
+.st-warn .st-dot {
+  background: rgba(255, 190, 11, 0.92);
+  box-shadow: 0 0 0 6px rgba(255, 190, 11, 0.12);
+}
+
+.st-bad {
+  border-color: rgba(255, 0, 110, 0.26);
+}
+.st-bad .st-dot {
+  background: rgba(255, 0, 110, 0.9);
+  box-shadow: 0 0 0 6px rgba(255, 0, 110, 0.12);
+}
+
+.st-wait {
+  border-color: rgba(255, 255, 255, 0.12);
+}
