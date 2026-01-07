@@ -12,7 +12,11 @@ type AppCard = {
   gradient: string;
   glow: string;
   accent: string;
+  who: string;
+  keyUses: string[];
 };
+
+const ACCESS_EMAIL = "tcotek@amrome.com";
 
 const APPS: AppCard[] = [
   {
@@ -23,6 +27,8 @@ const APPS: AppCard[] = [
     gradient: "grad-bms",
     glow: "glow-bms",
     accent: "accent-bms",
+    who: "Operations, Admin, Sales coordination",
+    keyUses: ["Sales leads & logs", "Pipeline hygiene", "Project tracking & delivery cues"],
   },
   {
     name: "HR",
@@ -32,6 +38,8 @@ const APPS: AppCard[] = [
     gradient: "grad-hr",
     glow: "glow-hr",
     accent: "accent-hr",
+    who: "HR, Admin, Managers",
+    keyUses: ["Employee directory", "Leave workflows", "Docs, training & goals"],
   },
   {
     name: "FIN",
@@ -41,6 +49,8 @@ const APPS: AppCard[] = [
     gradient: "grad-fin",
     glow: "glow-fin",
     accent: "accent-fin",
+    who: "Finance, Admin",
+    keyUses: ["Tracking & approvals", "Visibility & reporting", "Operational finance"],
   },
 ];
 
@@ -159,6 +169,8 @@ export default function Home() {
   );
   const [checkedAt, setCheckedAt] = useState<string>("");
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const fetchStatus = async () => {
     try {
       const res = await fetch("/api/status", { cache: "no-store" });
@@ -174,18 +186,21 @@ export default function Home() {
 
   useEffect(() => {
     fetchStatus();
-    const t = setInterval(fetchStatus, 60_000); // every minute
+    const t = setInterval(fetchStatus, 60_000);
     return () => clearInterval(t);
   }, []);
 
-  // Keyboard shortcuts: 1,2,3
+  // Keyboard shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDrawerOpen(false);
       if (e.target && (e.target as HTMLElement).tagName === "INPUT") return;
+
       if (e.key === "1") window.open(APPS[0].url, "_blank", "noreferrer");
       if (e.key === "2") window.open(APPS[1].url, "_blank", "noreferrer");
       if (e.key === "3") window.open(APPS[2].url, "_blank", "noreferrer");
-      if (e.key.toLowerCase() === "r") fetchStatus(); // quick refresh
+      if (e.key.toLowerCase() === "r") fetchStatus();
+      if (e.key.toLowerCase() === "h") setDrawerOpen(true);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -202,6 +217,15 @@ export default function Home() {
       setMsg("Copied links to clipboard");
     } catch {
       setMsg("Could not copy (browser blocked)");
+    }
+  };
+
+  const copyAccessEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(ACCESS_EMAIL);
+      setMsg("Copied access email");
+    } catch {
+      setMsg("Could not copy email (browser blocked)");
     }
   };
 
@@ -231,7 +255,10 @@ export default function Home() {
           </div>
 
           <div className="header-actions">
-            <a className="chip" href="mailto:tcotek@amrome.com">
+            <button className="chip" onClick={() => setDrawerOpen(true)} type="button">
+              How to use
+            </button>
+            <a className="chip" href={`mailto:${ACCESS_EMAIL}`}>
               Need access?
             </a>
             <a className="chip chip-ghost" href="mailto:support@cotek.app">
@@ -242,21 +269,22 @@ export default function Home() {
 
         <section className="quick fade-in">
           <button className="qbtn" onClick={openAll} type="button">
-            Open all apps
-            <span className="kbd">⇧</span>
+            Open all apps <span className="kbd">⇧</span>
           </button>
           <button className="qbtn qbtn-ghost" onClick={copyLinks} type="button">
-            Copy links
-            <span className="kbd">⌘</span>
+            Copy links <span className="kbd">⌘</span>
           </button>
           <button className="qbtn qbtn-ghost" onClick={fetchStatus} type="button">
-            Refresh status
-            <span className="kbd">R</span>
+            Refresh status <span className="kbd">R</span>
+          </button>
+          <button className="qbtn qbtn-ghost" onClick={() => setDrawerOpen(true)} type="button">
+            Onboarding <span className="kbd">H</span>
           </button>
 
           <div className="qhint">
             Shortcuts: <span className="kbd">1</span> BMS{" "}
-            <span className="kbd">2</span> HR <span className="kbd">3</span> FIN
+            <span className="kbd">2</span> HR <span className="kbd">3</span> FIN{" "}
+            <span className="kbd">H</span> Help
           </div>
         </section>
 
@@ -314,9 +342,7 @@ export default function Home() {
             const kind =
               app.name === "BMS" ? "bms" : app.name === "HR" ? "hr" : "fin";
 
-            const row =
-              status[app.name as "BMS" | "HR" | "FIN"] ??
-              status[app.name.toUpperCase()];
+            const row = status[app.name as "BMS" | "HR" | "FIN"];
             const st = statusLabel(row);
 
             return (
@@ -344,7 +370,6 @@ export default function Home() {
                     <span className="open-pill">Open</span>
                   </div>
 
-                  {/* status badge */}
                   <div className={`status-pill ${st.cls}`}>
                     <span className="st-dot" />
                     {st.text}
@@ -378,6 +403,67 @@ export default function Home() {
         </footer>
       </div>
 
+      {/* Drawer */}
+      <div className={`drawer-backdrop ${drawerOpen ? "show" : ""}`} onClick={() => setDrawerOpen(false)} />
+      <aside className={`drawer ${drawerOpen ? "open" : ""}`} aria-hidden={!drawerOpen}>
+        <div className="drawer-head">
+          <div>
+            <div className="drawer-title">Onboarding • COTEK Portal</div>
+            <div className="drawer-sub">
+              Think of each app as a module in a larger organism — different organs, same DNA.
+            </div>
+          </div>
+          <button className="drawer-close" onClick={() => setDrawerOpen(false)} type="button">
+            ✕
+          </button>
+        </div>
+
+        <div className="drawer-body">
+          <div className="drawer-block">
+            <div className="drawer-block-title">Access</div>
+            <div className="drawer-block-text">
+              If you need a role enabled, email: <span className="mono">{ACCESS_EMAIL}</span>
+            </div>
+            <div className="drawer-actions">
+              <a className="dbtn" href={`mailto:${ACCESS_EMAIL}`}>
+                Email access request
+              </a>
+              <button className="dbtn dbtn-ghost" onClick={copyAccessEmail} type="button">
+                Copy email
+              </button>
+            </div>
+          </div>
+
+          {APPS.map((a) => (
+            <div key={a.name} className="drawer-block">
+              <div className="drawer-block-title">{a.name}</div>
+              <div className="drawer-block-text">{a.short}</div>
+              <div className="drawer-mini">
+                <div><span className="muted">Who:</span> {a.who}</div>
+                <ul className="drawer-list">
+                  {a.keyUses.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
+              </div>
+              <a className="drawer-link" href={a.url} target="_blank" rel="noreferrer">
+                Open {a.name} →
+              </a>
+            </div>
+          ))}
+
+          <div className="drawer-block">
+            <div className="drawer-block-title">Shortcuts</div>
+            <div className="drawer-block-text">
+              <span className="kbd">1</span> BMS • <span className="kbd">2</span> HR •{" "}
+              <span className="kbd">3</span> FIN • <span className="kbd">R</span> Refresh •{" "}
+              <span className="kbd">Esc</span> Close
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* toast */}
       <div className={`toast ${msg ? "toast-show" : ""}`} aria-live="polite">
         {msg ?? ""}
       </div>

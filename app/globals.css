@@ -632,3 +632,176 @@ body {
 .st-wait {
   border-color: rgba(255, 255, 255, 0.12);
 }
+/* --- Drawer --- */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.48);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+  z-index: 30;
+}
+
+.drawer-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(520px, 92vw);
+  background: rgba(10, 12, 24, 0.78);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  transform: translateX(102%);
+  transition: transform 220ms ease;
+  z-index: 31;
+  box-shadow: -24px 0 80px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-head {
+  padding: 14px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.drawer-title {
+  font-size: 15px;
+  font-weight: 780;
+}
+
+.drawer-sub {
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.4;
+}
+
+.drawer-close {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.86);
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
+}
+
+.drawer-close:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.drawer-body {
+  padding: 14px;
+  overflow: auto;
+  display: grid;
+  gap: 12px;
+}
+
+.drawer-block {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 18px;
+  padding: 12px;
+}
+
+.drawer-block-title {
+  font-size: 13px;
+  font-weight: 760;
+  margin-bottom: 6px;
+}
+
+.drawer-block-text {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.45;
+}
+
+.drawer-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dbtn {
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 9px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.dbtn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.dbtn-ghost {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.drawer-link {
+  margin-top: 10px;
+  display: inline-flex;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.drawer-link:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.drawer-mini {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.drawer-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.muted {
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  color: rgba(255, 255, 255, 0.82);
+}
