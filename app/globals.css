@@ -849,3 +849,10 @@ body {
     grid-template-columns: 1fr;
   }
 }
+.logo-img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  border-radius: 10px; /* keeps the same soft aesthetic */
+  display: block;
+}
