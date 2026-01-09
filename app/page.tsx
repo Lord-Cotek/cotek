@@ -19,6 +19,9 @@ type AppCard = {
 
 const ACCESS_EMAIL = "tcotek@amrome.com";
 
+// ✅ IMPORTANT: make sure your file is exactly: /public/cotek-logo.png
+const LOGO_SRC = "/cotek-logo.png";
+
 const APPS: AppCard[] = [
   {
     name: "BMS",
@@ -138,14 +141,7 @@ function Icon({ kind }: { kind: "bms" | "hr" | "fin" | "scm" }) {
         strokeLinejoin="round"
         opacity="0.75"
       />
-      <path
-        d="M12 11v10"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.6"
-      />
+      <path d="M12 11v10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
     </svg>
   );
 }
@@ -247,9 +243,11 @@ export default function Home() {
       <div className="container">
         <header className="top fade-in">
           <div className="brand">
+            {/* ✅ Replaced placeholder dot with your PNG logo */}
             <div className="logo">
-              <span className="logo-dot" />
+              <img src={LOGO_SRC} alt="COTEK" className="logo-img" draggable={false} />
             </div>
+
             <div className="brand-text">
               <div className="brand-title">COTEK Portal</div>
               <div className="brand-sub">Four platforms, one launchpad — pick your orbit.</div>
@@ -341,8 +339,7 @@ export default function Home() {
 
         <section className="cards cards-4">
           {APPS.map((app) => {
-            const kind =
-              app.name === "BMS" ? "bms" : app.name === "HR" ? "hr" : app.name === "FIN" ? "fin" : "scm";
+            const kind = app.name === "BMS" ? "bms" : app.name === "HR" ? "hr" : app.name === "FIN" ? "fin" : "scm";
 
             const row = status[app.name as "BMS" | "HR" | "FIN" | "SCM"];
             const st = statusLabel(row);
