@@ -805,3 +805,47 @@ body {
     monospace;
   color: rgba(255, 255, 255, 0.82);
 }
+/* --- 4-card layout + preview pill --- */
+.cards-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.app-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dev-pill {
+  font-size: 12px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 190, 11, 0.22);
+  background: rgba(255, 190, 11, 0.10);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* SCM theme */
+.grad-scm {
+  background: linear-gradient(135deg, rgba(0, 245, 212, 0.9), rgba(131, 56, 236, 0.9));
+}
+
+.accent-scm {
+  box-shadow: 0 0 0 6px rgba(131, 56, 236, 0.14), 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.glow-scm:hover {
+  box-shadow: 0 24px 70px rgba(131, 56, 236, 0.16), var(--shadow);
+}
+
+@media (max-width: 1200px) {
+  .cards-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 980px) {
+  .cards-4 {
+    grid-template-columns: 1fr;
+  }
+}

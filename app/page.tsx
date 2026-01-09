@@ -14,6 +14,7 @@ type AppCard = {
   accent: string;
   who: string;
   keyUses: string[];
+  badge?: string; // ✅ for "Preview" / "In Development"
 };
 
 const ACCESS_EMAIL = "tcotek@amrome.com";
@@ -52,10 +53,22 @@ const APPS: AppCard[] = [
     who: "Finance, Admin",
     keyUses: ["Tracking & approvals", "Visibility & reporting", "Operational finance"],
   },
+  {
+    name: "SCM",
+    short: "Supply Chain & Inventory — items, assets, locations, stock events.",
+    url: "https://scm.cotek.app",
+    tag: "Inventory",
+    gradient: "grad-scm",
+    glow: "glow-scm",
+    accent: "accent-scm",
+    who: "Inventory team, Operations, Admin",
+    keyUses: ["Items & assets", "Stock movements", "Locations, vendors, reporting"],
+    badge: "Preview", // ✅ clear this is in development
+  },
 ];
 
 type StatusRow = {
-  key: "BMS" | "HR" | "FIN";
+  key: "BMS" | "HR" | "FIN" | "SCM";
   url: string;
   ok: boolean;
   status: number;
@@ -67,17 +80,11 @@ type StatusPayload = {
   results: StatusRow[];
 };
 
-function Icon({ kind }: { kind: "bms" | "hr" | "fin" }) {
+function Icon({ kind }: { kind: "bms" | "hr" | "fin" | "scm" }) {
   if (kind === "bms") {
     return (
       <svg width="22" height="22" viewBox="0 0 24 24" className="icon">
-        <path
-          d="M7 7h10M7 12h6M7 17h10"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <path d="M7 7h10M7 12h6M7 17h10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         <path
           d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
           fill="none"
@@ -91,13 +98,7 @@ function Icon({ kind }: { kind: "bms" | "hr" | "fin" }) {
   if (kind === "hr") {
     return (
       <svg width="22" height="22" viewBox="0 0 24 24" className="icon">
-        <path
-          d="M16 11a4 4 0 1 0-8 0"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <path d="M16 11a4 4 0 1 0-8 0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         <path
           d="M4 20a8 8 0 0 1 16 0"
           fill="none"
@@ -109,30 +110,41 @@ function Icon({ kind }: { kind: "bms" | "hr" | "fin" }) {
       </svg>
     );
   }
+  if (kind === "fin") {
+    return (
+      <svg width="22" height="22" viewBox="0 0 24 24" className="icon">
+        <path d="M4 19V5M20 19V5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+        <path d="M7 16l3-3 3 2 4-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <path d="M4 19h16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+      </svg>
+    );
+  }
+  // scm
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" className="icon">
       <path
-        d="M4 19V5M20 19V5"
+        d="M3 7l9-4 9 4-9 4-9-4Z"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.7"
+        strokeLinejoin="round"
+        opacity="0.9"
       />
       <path
-        d="M7 16l3-3 3 2 4-5"
+        d="M3 7v10l9 4 9-4V7"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
-        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.75"
       />
       <path
-        d="M4 19h16"
+        d="M12 11v10"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
-        opacity="0.7"
+        opacity="0.6"
       />
     </svg>
   );
@@ -159,17 +171,12 @@ function statusLabel(s?: StatusRow) {
 
 export default function Home() {
   const { msg, setMsg } = useToast();
-
-  const linksText = useMemo(() => {
-    return APPS.map((a) => `${a.name}: ${a.url}`).join("\n");
-  }, []);
-
-  const [status, setStatus] = useState<Record<string, StatusRow | undefined>>(
-    {}
-  );
-  const [checkedAt, setCheckedAt] = useState<string>("");
-
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const linksText = useMemo(() => APPS.map((a) => `${a.name}: ${a.url}`).join("\n"), []);
+
+  const [status, setStatus] = useState<Record<string, StatusRow | undefined>>({});
+  const [checkedAt, setCheckedAt] = useState<string>("");
 
   const fetchStatus = async () => {
     try {
@@ -180,7 +187,7 @@ export default function Home() {
       setStatus(map);
       setCheckedAt(data.checkedAt);
     } catch {
-      // leave as-is
+      // ignore
     }
   };
 
@@ -190,15 +197,14 @@ export default function Home() {
     return () => clearInterval(t);
   }, []);
 
-  // Keyboard shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setDrawerOpen(false);
-      if (e.target && (e.target as HTMLElement).tagName === "INPUT") return;
 
       if (e.key === "1") window.open(APPS[0].url, "_blank", "noreferrer");
       if (e.key === "2") window.open(APPS[1].url, "_blank", "noreferrer");
       if (e.key === "3") window.open(APPS[2].url, "_blank", "noreferrer");
+      if (e.key === "4") window.open(APPS[3].url, "_blank", "noreferrer"); // ✅ SCM
       if (e.key.toLowerCase() === "r") fetchStatus();
       if (e.key.toLowerCase() === "h") setDrawerOpen(true);
     };
@@ -229,9 +235,7 @@ export default function Home() {
     }
   };
 
-  const checkedLabel = checkedAt
-    ? new Date(checkedAt).toLocaleString()
-    : "—";
+  const checkedLabel = checkedAt ? new Date(checkedAt).toLocaleString() : "—";
 
   return (
     <main className="page">
@@ -248,9 +252,7 @@ export default function Home() {
             </div>
             <div className="brand-text">
               <div className="brand-title">COTEK Portal</div>
-              <div className="brand-sub">
-                Three platforms, one launchpad — pick your orbit.
-              </div>
+              <div className="brand-sub">Four platforms, one launchpad — pick your orbit.</div>
             </div>
           </div>
 
@@ -282,8 +284,8 @@ export default function Home() {
           </button>
 
           <div className="qhint">
-            Shortcuts: <span className="kbd">1</span> BMS{" "}
-            <span className="kbd">2</span> HR <span className="kbd">3</span> FIN{" "}
+            Shortcuts: <span className="kbd">1</span> BMS <span className="kbd">2</span> HR{" "}
+            <span className="kbd">3</span> FIN <span className="kbd">4</span> SCM{" "}
             <span className="kbd">H</span> Help
           </div>
         </section>
@@ -292,7 +294,7 @@ export default function Home() {
           <div className="dash-card">
             <div className="dash-kpi">
               <div className="kpi-label">Platforms</div>
-              <div className="kpi-value">3</div>
+              <div className="kpi-value">4</div>
             </div>
             <div className="dash-meta">
               <div className="meta-row">
@@ -337,12 +339,12 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="cards">
+        <section className="cards cards-4">
           {APPS.map((app) => {
             const kind =
-              app.name === "BMS" ? "bms" : app.name === "HR" ? "hr" : "fin";
+              app.name === "BMS" ? "bms" : app.name === "HR" ? "hr" : app.name === "FIN" ? "fin" : "scm";
 
-            const row = status[app.name as "BMS" | "HR" | "FIN"];
+            const row = status[app.name as "BMS" | "HR" | "FIN" | "SCM"];
             const st = statusLabel(row);
 
             return (
@@ -367,7 +369,10 @@ export default function Home() {
 
                   <div className="app-title-row">
                     <h2 className="app-title">{app.name}</h2>
-                    <span className="open-pill">Open</span>
+                    <div className="app-right">
+                      {app.badge ? <span className="dev-pill">{app.badge}</span> : null}
+                      <span className="open-pill">Open</span>
+                    </div>
                   </div>
 
                   <div className={`status-pill ${st.cls}`}>
@@ -391,14 +396,11 @@ export default function Home() {
           <div className="footer-left">
             <span className="footer-mark" />
             <span>
-              © {new Date().getFullYear()} COTEK • A tidy index for fast human
-              routing.
+              © {new Date().getFullYear()} COTEK • A tidy index for fast human routing.
             </span>
           </div>
           <div className="footer-right">
-            <span className="footnote">
-              If you can’t access an app, your role may not be enabled.
-            </span>
+            <span className="footnote">If you can’t access an app, your role may not be enabled.</span>
           </div>
         </footer>
       </div>
@@ -410,7 +412,7 @@ export default function Home() {
           <div>
             <div className="drawer-title">Onboarding • COTEK Portal</div>
             <div className="drawer-sub">
-              Think of each app as a module in a larger organism — different organs, same DNA.
+              Different modules, same organism — the pathways stay clean so the whole system stays healthy.
             </div>
           </div>
           <button className="drawer-close" onClick={() => setDrawerOpen(false)} type="button">
@@ -436,10 +438,14 @@ export default function Home() {
 
           {APPS.map((a) => (
             <div key={a.name} className="drawer-block">
-              <div className="drawer-block-title">{a.name}</div>
+              <div className="drawer-block-title">
+                {a.name} {a.badge ? <span className="dev-pill" style={{ marginLeft: 8 }}>{a.badge}</span> : null}
+              </div>
               <div className="drawer-block-text">{a.short}</div>
               <div className="drawer-mini">
-                <div><span className="muted">Who:</span> {a.who}</div>
+                <div>
+                  <span className="muted">Who:</span> {a.who}
+                </div>
                 <ul className="drawer-list">
                   {a.keyUses.map((x) => (
                     <li key={x}>{x}</li>
@@ -456,8 +462,8 @@ export default function Home() {
             <div className="drawer-block-title">Shortcuts</div>
             <div className="drawer-block-text">
               <span className="kbd">1</span> BMS • <span className="kbd">2</span> HR •{" "}
-              <span className="kbd">3</span> FIN • <span className="kbd">R</span> Refresh •{" "}
-              <span className="kbd">Esc</span> Close
+              <span className="kbd">3</span> FIN • <span className="kbd">4</span> SCM •{" "}
+              <span className="kbd">R</span> Refresh • <span className="kbd">Esc</span> Close
             </div>
           </div>
         </div>
