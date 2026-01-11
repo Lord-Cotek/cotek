@@ -14,12 +14,10 @@ type AppCard = {
   accent: string;
   who: string;
   keyUses: string[];
-  badge?: string; // ✅ for "Preview" / "In Development"
+  badge?: string;
 };
 
 const ACCESS_EMAIL = "tcotek@amrome.com";
-
-// ✅ IMPORTANT: make sure your file is exactly: /public/cotek-logo.png
 const LOGO_SRC = "/cotek-logo.png";
 
 const APPS: AppCard[] = [
@@ -58,15 +56,15 @@ const APPS: AppCard[] = [
   },
   {
     name: "SCM",
-    short: "Supply Chain & Inventory — items, assets, locations, stock events.",
+    short: "Supply Chain Management — inventory, stock movements, locations, and audit-ready tracking.",
     url: "https://scm.cotek.app",
     tag: "Inventory",
     gradient: "grad-scm",
     glow: "glow-scm",
     accent: "accent-scm",
-    who: "Inventory team, Operations, Admin",
-    keyUses: ["Items & assets", "Stock movements", "Locations, vendors, reporting"],
-    badge: "Preview", // ✅ clear this is in development
+    who: "Inventory, Operations, Admin",
+    keyUses: ["Items & assets", "Receive / Issue / Transfer / Adjust", "Locations, vendors & traceability"],
+    // ✅ badge removed (no longer Preview)
   },
 ];
 
@@ -122,7 +120,6 @@ function Icon({ kind }: { kind: "bms" | "hr" | "fin" | "scm" }) {
       </svg>
     );
   }
-  // scm
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" className="icon">
       <path
@@ -200,7 +197,7 @@ export default function Home() {
       if (e.key === "1") window.open(APPS[0].url, "_blank", "noreferrer");
       if (e.key === "2") window.open(APPS[1].url, "_blank", "noreferrer");
       if (e.key === "3") window.open(APPS[2].url, "_blank", "noreferrer");
-      if (e.key === "4") window.open(APPS[3].url, "_blank", "noreferrer"); // ✅ SCM
+      if (e.key === "4") window.open(APPS[3].url, "_blank", "noreferrer");
       if (e.key.toLowerCase() === "r") fetchStatus();
       if (e.key.toLowerCase() === "h") setDrawerOpen(true);
     };
@@ -243,11 +240,9 @@ export default function Home() {
       <div className="container">
         <header className="top fade-in">
           <div className="brand">
-            {/* ✅ Replaced placeholder dot with your PNG logo */}
             <div className="logo">
               <img src={LOGO_SRC} alt="COTEK" className="logo-img" draggable={false} />
             </div>
-
             <div className="brand-text">
               <div className="brand-title">COTEK Portal</div>
               <div className="brand-sub">Four platforms, one launchpad — pick your orbit.</div>
@@ -340,25 +335,17 @@ export default function Home() {
         <section className="cards cards-4">
           {APPS.map((app) => {
             const kind = app.name === "BMS" ? "bms" : app.name === "HR" ? "hr" : app.name === "FIN" ? "fin" : "scm";
-
             const row = status[app.name as "BMS" | "HR" | "FIN" | "SCM"];
             const st = statusLabel(row);
 
             return (
-              <Link
-                key={app.name}
-                href={app.url}
-                className={`app-card ${app.glow} fade-in`}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <Link key={app.name} href={app.url} className={`app-card ${app.glow} fade-in`} target="_blank" rel="noreferrer">
                 <div className={`app-banner ${app.gradient}`} />
                 <div className="app-body">
                   <div className="app-topline">
                     <div className={`app-icon ${app.accent}`}>
                       <Icon kind={kind} />
                     </div>
-
                     <div className="app-pill">
                       <span className="pill-dot" /> {app.tag}
                     </div>
@@ -392,9 +379,7 @@ export default function Home() {
         <footer className="footer fade-in">
           <div className="footer-left">
             <span className="footer-mark" />
-            <span>
-              © {new Date().getFullYear()} COTEK • A tidy index for fast human routing.
-            </span>
+            <span>© {new Date().getFullYear()} COTEK • A tidy index for fast human routing.</span>
           </div>
           <div className="footer-right">
             <span className="footnote">If you can’t access an app, your role may not be enabled.</span>
@@ -402,7 +387,6 @@ export default function Home() {
         </footer>
       </div>
 
-      {/* Drawer */}
       <div className={`drawer-backdrop ${drawerOpen ? "show" : ""}`} onClick={() => setDrawerOpen(false)} />
       <aside className={`drawer ${drawerOpen ? "open" : ""}`} aria-hidden={!drawerOpen}>
         <div className="drawer-head">
@@ -458,15 +442,13 @@ export default function Home() {
           <div className="drawer-block">
             <div className="drawer-block-title">Shortcuts</div>
             <div className="drawer-block-text">
-              <span className="kbd">1</span> BMS • <span className="kbd">2</span> HR •{" "}
-              <span className="kbd">3</span> FIN • <span className="kbd">4</span> SCM •{" "}
-              <span className="kbd">R</span> Refresh • <span className="kbd">Esc</span> Close
+              <span className="kbd">1</span> BMS • <span className="kbd">2</span> HR • <span className="kbd">3</span> FIN •{" "}
+              <span className="kbd">4</span> SCM • <span className="kbd">R</span> Refresh • <span className="kbd">Esc</span> Close
             </div>
           </div>
         </div>
       </aside>
 
-      {/* toast */}
       <div className={`toast ${msg ? "toast-show" : ""}`} aria-live="polite">
         {msg ?? ""}
       </div>
