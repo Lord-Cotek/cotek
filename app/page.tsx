@@ -29,7 +29,7 @@ const APPS: AppCard[] = [
     glow: "glow-bms",
     accent: "accent-bms",
     who: "Operations, Admin, Sales coordination",
-    keyUses: ["Sales leads & logs", "Pipeline hygiene", "Project tracking"],
+    keyUses: ["Sales leads & logs", "Pipeline hygiene", "Project tracking & delivery cues"],
   },
   {
     name: "HR",
@@ -40,7 +40,7 @@ const APPS: AppCard[] = [
     glow: "glow-hr",
     accent: "accent-hr",
     who: "HR, Admin, Managers",
-    keyUses: ["Employee directory", "Leave workflows", "Training & goals"],
+    keyUses: ["Employee directory", "Leave workflows", "Docs, training & goals"],
   },
   {
     name: "FIN",
@@ -51,7 +51,7 @@ const APPS: AppCard[] = [
     glow: "glow-fin",
     accent: "accent-fin",
     who: "Finance, Admin",
-    keyUses: ["Approvals", "Tracking", "Reporting"],
+    keyUses: ["Tracking & approvals", "Visibility & reporting", "Operational finance"],
   },
   {
     name: "SCM",
@@ -62,7 +62,7 @@ const APPS: AppCard[] = [
     glow: "glow-scm",
     accent: "accent-scm",
     who: "Inventory, Operations, Admin",
-    keyUses: ["Items & assets", "Stock movements", "Traceability"],
+    keyUses: ["Items & assets", "Stock movements", "Locations, vendors & traceability"],
   },
   {
     name: "PMS",
@@ -90,17 +90,16 @@ type StatusPayload = {
   results: StatusRow[];
 };
 
-function Icon({ kind }: { kind: "bms" | "hr" | "fin" | "scm" | "pms" }) {
-  if (kind === "pms") {
-    return (
-      <svg width="22" height="22" viewBox="0 0 24 24" className="icon">
-        <path d="M4 6h16M4 12h10M4 18h7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="18" cy="12" r="3" stroke="currentColor" strokeWidth="2" fill="none" />
-      </svg>
-    );
-  }
-  // existing icons unchanged
-  return null as any;
+function useToast() {
+  const [msg, setMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!msg) return;
+    const t = setTimeout(() => setMsg(null), 1800);
+    return () => clearTimeout(t);
+  }, [msg]);
+
+  return { msg, setMsg };
 }
 
 function statusLabel(s?: StatusRow) {
@@ -111,16 +110,22 @@ function statusLabel(s?: StatusRow) {
 }
 
 export default function Home() {
+  const { msg, setMsg } = useToast();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const linksText = useMemo(() => APPS.map((a) => `${a.name}: ${a.url}`).join("\n"), []);
   const [status, setStatus] = useState<Record<string, StatusRow | undefined>>({});
   const [checkedAt, setCheckedAt] = useState("");
 
   const fetchStatus = async () => {
-    const res = await fetch("/api/status", { cache: "no-store" });
-    const data = (await res.json()) as StatusPayload;
-    const map: Record<string, StatusRow> = {};
-    data.results.forEach((r) => (map[r.key] = r));
-    setStatus(map);
-    setCheckedAt(data.checkedAt);
+    try {
+      const res = await fetch("/api/status", { cache: "no-store" });
+      const data = (await res.json()) as StatusPayload;
+      const map: Record<string, StatusRow> = {};
+      data.results.forEach((r) => (map[r.key] = r));
+      setStatus(map);
+      setCheckedAt(data.checkedAt);
+    } catch {}
   };
 
   useEffect(() => {
@@ -132,40 +137,55 @@ export default function Home() {
   return (
     <main className="page">
       <div className="container">
-        <header className="top">
+        <header className="top fade-in">
           <div className="brand">
             <div className="logo">
-              <img src={LOGO_SRC} className="logo-img" alt="COTEK" />
+              <img src={LOGO_SRC} alt="COTEK" className="logo-img" />
             </div>
-            <div>
+            <div className="brand-text">
               <div className="brand-title">COTEK Portal</div>
               <div className="brand-sub">Five platforms, one launchpad — pick your orbit.</div>
             </div>
           </div>
         </header>
 
-        <section className="cards cards-5">
+        <section className="cards cards-5 fade-in">
           {APPS.map((app) => {
             const row = status[app.name as keyof typeof status];
             const st = statusLabel(row);
 
             return (
-              <Link key={app.name} href={app.url} target="_blank" className={`app-card ${app.glow}`}>
+              <Link
+                key={app.name}
+                href={app.url}
+                className={`app-card ${app.glow}`}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <div className={`app-banner ${app.gradient}`} />
                 <div className="app-body">
-                  <h2>{app.name}</h2>
-                  <div className={`status-pill ${st.cls}`}>{st.text}</div>
-                  <p>{app.short}</p>
+                  <div className={`status-pill ${st.cls}`}>
+                    <span className="st-dot" />
+                    {st.text}
+                  </div>
+                  <h2 className="app-title">{app.name}</h2>
+                  <p className="app-desc">{app.short}</p>
+                  <div className="app-footer">
+                    <div className="url">{app.url.replace("https://", "")}</div>
+                    <div className="hint">Opens in new tab →</div>
+                  </div>
                 </div>
               </Link>
             );
           })}
         </section>
 
-        <footer className="footer">
+        <footer className="footer fade-in">
           © {new Date().getFullYear()} COTEK • Unified operational intelligence
         </footer>
       </div>
+
+      <div className={`toast ${msg ? "toast-show" : ""}`}>{msg}</div>
     </main>
   );
 }
