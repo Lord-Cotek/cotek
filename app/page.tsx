@@ -66,10 +66,21 @@ const APPS: AppCard[] = [
     keyUses: ["Items & assets", "Receive / Issue / Transfer / Adjust", "Locations, vendors & traceability"],
     // ✅ badge removed (no longer Preview)
   },
+  {
+    name: "PMS",
+    short: "Project Management System — planning, execution, timelines, and resource control.",
+    url: "https://pms.cotek.app",
+    tag: "Projects",
+    gradient: "grad-pms",
+    glow: "glow-pms",
+    accent: "accent-pms",
+    who: "Project Managers, Operations, Admin",
+    keyUses: ["Project planning", "Task scheduling", "Resource allocation & milestones"],
+  },
 ];
 
 type StatusRow = {
-  key: "BMS" | "HR" | "FIN" | "SCM";
+  key: "BMS" | "HR" | "FIN" | "SCM" | "PMS";
   url: string;
   ok: boolean;
   status: number;
@@ -81,7 +92,7 @@ type StatusPayload = {
   results: StatusRow[];
 };
 
-function Icon({ kind }: { kind: "bms" | "hr" | "fin" | "scm" }) {
+function Icon({ kind }: { kind: "bms" | "hr" | "fin" | "scm" | "pms" }) {
   if (kind === "bms") {
     return (
       <svg width="22" height="22" viewBox="0 0 24 24" className="icon">
@@ -117,6 +128,35 @@ function Icon({ kind }: { kind: "bms" | "hr" | "fin" | "scm" }) {
         <path d="M4 19V5M20 19V5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
         <path d="M7 16l3-3 3 2 4-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         <path d="M4 19h16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+      </svg>
+    );
+  }
+  if (kind === "pms") {
+    return (
+      <svg width="22" height="22" viewBox="0 0 24 24" className="icon">
+        <path
+          d="M7 3v3M17 3v3M4 8h16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          opacity="0.8"
+        />
+        <path
+          d="M6 6h12a2 2 0 0 1 2 2v11a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8a2 2 0 0 1 2-2Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          opacity="0.75"
+        />
+        <path
+          d="M8 12h8M8 16h5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          opacity="0.9"
+        />
       </svg>
     );
   }
@@ -198,6 +238,7 @@ export default function Home() {
       if (e.key === "2") window.open(APPS[1].url, "_blank", "noreferrer");
       if (e.key === "3") window.open(APPS[2].url, "_blank", "noreferrer");
       if (e.key === "4") window.open(APPS[3].url, "_blank", "noreferrer");
+      if (e.key === "5") window.open(APPS[4].url, "_blank", "noreferrer"); // ✅ PMS
       if (e.key.toLowerCase() === "r") fetchStatus();
       if (e.key.toLowerCase() === "h") setDrawerOpen(true);
     };
@@ -245,7 +286,7 @@ export default function Home() {
             </div>
             <div className="brand-text">
               <div className="brand-title">COTEK Portal</div>
-              <div className="brand-sub">Four platforms, one launchpad — pick your orbit.</div>
+              <div className="brand-sub">Five platforms, one launchpad — pick your orbit.</div>
             </div>
           </div>
 
@@ -279,7 +320,7 @@ export default function Home() {
           <div className="qhint">
             Shortcuts: <span className="kbd">1</span> BMS <span className="kbd">2</span> HR{" "}
             <span className="kbd">3</span> FIN <span className="kbd">4</span> SCM{" "}
-            <span className="kbd">H</span> Help
+            <span className="kbd">5</span> PMS <span className="kbd">H</span> Help
           </div>
         </section>
 
@@ -287,7 +328,7 @@ export default function Home() {
           <div className="dash-card">
             <div className="dash-kpi">
               <div className="kpi-label">Platforms</div>
-              <div className="kpi-value">4</div>
+              <div className="kpi-value">5</div>
             </div>
             <div className="dash-meta">
               <div className="meta-row">
@@ -332,10 +373,12 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="cards cards-4">
+        <section className="cards cards-5">
           {APPS.map((app) => {
-            const kind = app.name === "BMS" ? "bms" : app.name === "HR" ? "hr" : app.name === "FIN" ? "fin" : "scm";
-            const row = status[app.name as "BMS" | "HR" | "FIN" | "SCM"];
+            const kind =
+              app.name === "BMS" ? "bms" : app.name === "HR" ? "hr" : app.name === "FIN" ? "fin" : app.name === "PMS" ? "pms" : "scm";
+
+            const row = status[app.name as "BMS" | "HR" | "FIN" | "SCM" | "PMS"];
             const st = statusLabel(row);
 
             return (
@@ -420,7 +463,12 @@ export default function Home() {
           {APPS.map((a) => (
             <div key={a.name} className="drawer-block">
               <div className="drawer-block-title">
-                {a.name} {a.badge ? <span className="dev-pill" style={{ marginLeft: 8 }}>{a.badge}</span> : null}
+                {a.name}{" "}
+                {a.badge ? (
+                  <span className="dev-pill" style={{ marginLeft: 8 }}>
+                    {a.badge}
+                  </span>
+                ) : null}
               </div>
               <div className="drawer-block-text">{a.short}</div>
               <div className="drawer-mini">
@@ -443,7 +491,8 @@ export default function Home() {
             <div className="drawer-block-title">Shortcuts</div>
             <div className="drawer-block-text">
               <span className="kbd">1</span> BMS • <span className="kbd">2</span> HR • <span className="kbd">3</span> FIN •{" "}
-              <span className="kbd">4</span> SCM • <span className="kbd">R</span> Refresh • <span className="kbd">Esc</span> Close
+              <span className="kbd">4</span> SCM • <span className="kbd">5</span> PMS • <span className="kbd">R</span> Refresh •{" "}
+              <span className="kbd">Esc</span> Close
             </div>
           </div>
         </div>
