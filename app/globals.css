@@ -805,9 +805,15 @@ body {
     monospace;
   color: rgba(255, 255, 255, 0.82);
 }
+
 /* --- 4-card layout + preview pill --- */
 .cards-4 {
   grid-template-columns: repeat(4, 1fr);
+}
+
+/* ✅ 5-card layout (PMS added) */
+.cards-5 {
+  grid-template-columns: repeat(5, 1fr);
 }
 
 .app-right {
@@ -838,8 +844,25 @@ body {
   box-shadow: 0 24px 70px rgba(131, 56, 236, 0.16), var(--shadow);
 }
 
+/* ✅ PMS theme (new) */
+.grad-pms {
+  background: linear-gradient(135deg, rgba(131, 56, 236, 0.92), rgba(255, 0, 110, 0.88));
+}
+
+.accent-pms {
+  box-shadow: 0 0 0 6px rgba(255, 0, 110, 0.13), 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.glow-pms:hover {
+  box-shadow: 0 24px 70px rgba(255, 0, 110, 0.14), var(--shadow);
+}
+
 @media (max-width: 1200px) {
   .cards-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* ✅ PMS responsive */
+  .cards-5 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -848,7 +871,12 @@ body {
   .cards-4 {
     grid-template-columns: 1fr;
   }
+  /* ✅ PMS responsive */
+  .cards-5 {
+    grid-template-columns: 1fr;
+  }
 }
+
 .logo-img {
   width: 34px;
   height: 34px;
