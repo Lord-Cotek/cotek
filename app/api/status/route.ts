@@ -4,14 +4,28 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const TARGETS = [
+type TargetKey = "BMS" | "HR" | "FIN" | "SCM" | "PMS";
+
+type Target = {
+  key: TargetKey;
+  url: string;
+};
+
+type PingResult = {
+  ok: boolean;
+  status: number;
+  ms: number;
+};
+
+const TARGETS: Target[] = [
   { key: "BMS", url: "https://bms.cotek.app" },
   { key: "HR", url: "https://hr.cotek.app" },
   { key: "FIN", url: "https://fin.cotek.app" },
-  { key: "SCM", url: "https://scm.cotek.app" }, // ✅ NEW
+  { key: "SCM", url: "https://scm.cotek.app" },
+  { key: "PMS", url: "https://pms.cotek.app" }, // ✅ PMS added
 ];
 
-async function ping(url: string) {
+async function ping(url: string): Promise<PingResult> {
   const start = Date.now();
 
   try {
@@ -23,9 +37,11 @@ async function ping(url: string) {
 
     const ms = Date.now() - start;
     const status = res.status;
-    const healthy = status >= 200 && status < 400; // 2xx and 3xx are OK
 
-    return { ok: healthy, status, ms };
+    // Treat 2xx and 3xx as reachable/healthy (3xx because redirect: "manual")
+    const ok = status >= 200 && status < 400;
+
+    return { ok, status, ms };
   } catch {
     const ms = Date.now() - start;
     return { ok: false, status: 0, ms };
