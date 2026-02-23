@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "COTEK • Home",
+  title: "COTEK OS",
   description:
-    "A personal launchpad: poems, a family finance ledger, and multi-tenant accounting ledgers.",
+    "A systems console: signal (poems), household ledger (exp), multi-tenant accounting platform (pexp).",
   icons: { icon: "/favicon.ico" },
 };
 
