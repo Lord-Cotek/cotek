@@ -29,7 +29,7 @@ const APPS: AppCard[] = [
     name: "poems",
     short:
       "A small library of lines — draft, publish, and let language breathe.",
-    url: "https://poems.cotek.live",
+    url: "https://poems.cotek.app",
     tag: "Poetry",
     gradient: "grad-poems",
     glow: "glow-poems",
