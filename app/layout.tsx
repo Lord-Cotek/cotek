@@ -4,7 +4,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "COTEK • Home",
-  description: "A personal launchpad by Cotek.",
+  description:
+    "A personal launchpad: poems, a family finance ledger, and multi-tenant accounting ledgers.",
   icons: { icon: "/favicon.ico" },
 };
 

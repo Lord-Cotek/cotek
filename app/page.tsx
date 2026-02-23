@@ -27,7 +27,8 @@ const APPS: AppCard[] = [
   {
     key: "POEMS",
     name: "poems",
-    short: "A small library of lines — draft, publish, and let language breathe.",
+    short:
+      "A small library of lines — draft, publish, and let language breathe.",
     url: "https://poems.cotek.live",
     tag: "Poetry",
     gradient: "grad-poems",
@@ -39,27 +40,38 @@ const APPS: AppCard[] = [
   {
     key: "EXP",
     name: "exp",
-    short: "An experiment bench — notes, ideas, prototypes, and the occasional spark.",
-    url: "https://exp.cotek.live",
-    tag: "Experiments",
+    short:
+      "A personal family finance ledger — track budgets, reconcile reality, and keep the household story coherent.",
+    url: "https://exp.cotek.app",
+    tag: "Family Ledger",
     gradient: "grad-exp",
     glow: "glow-exp",
     accent: "accent-exp",
-    what: "Public experiments & logs",
-    keyUses: ["Capture hypotheses", "Track outcomes", "Keep an archive of curiosities"],
+    what: "Family finances & household accounting",
+    keyUses: [
+      "Track income & expenses",
+      "Budgets, categories, and notes",
+      "Monthly reviews and reconciliation",
+    ],
+    badge: "home",
   },
   {
     key: "PEXP",
     name: "pexp",
-    short: "A quieter lab notebook — private work, raw thoughts, and tender drafts.",
+    short:
+      "A multi-tenant ledger platform — accounts, journals, and clean books across multiple entities.",
     url: "https://pexp.cotek.live",
-    tag: "Private",
+    tag: "Multi-Tenant Ledger",
     gradient: "grad-pexp",
     glow: "glow-pexp",
     accent: "accent-pexp",
-    what: "Private experiments",
-    keyUses: ["Personal notes", "Unpolished drafts", "Sensitive scratch work"],
-    badge: "personal",
+    what: "Multi-entity accounting ledgers",
+    keyUses: [
+      "Multiple tenants / entities",
+      "Account trees & journals",
+      "Structured reporting foundations",
+    ],
+    badge: "platform",
   },
 ];
 
@@ -80,7 +92,13 @@ function Icon({ kind }: { kind: TargetKey }) {
   if (kind === "POEMS") {
     // feather / quill vibe
     return (
-      <svg width="22" height="22" viewBox="0 0 24 24" className="icon" aria-hidden="true">
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        className="icon"
+        aria-hidden="true"
+      >
         <path
           d="M20 4c-7.5.3-13 4.7-15.8 12.7-.3.9.7 1.7 1.5 1.2 1.9-1.1 4-1.8 6.2-2.1"
           fill="none"
@@ -101,71 +119,65 @@ function Icon({ kind }: { kind: TargetKey }) {
   }
 
   if (kind === "EXP") {
-    // beaker
+    // receipt / ledger sheet
     return (
-      <svg width="22" height="22" viewBox="0 0 24 24" className="icon" aria-hidden="true">
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        className="icon"
+        aria-hidden="true"
+      >
         <path
-          d="M10 2v6l-5.2 9a3.2 3.2 0 0 0 2.8 4.8h8.8a3.2 3.2 0 0 0 2.8-4.8L14 8V2"
+          d="M7 3h10a2 2 0 0 1 2 2v16l-2-1-2 1-2-1-2 1-2-1-2 1V5a2 2 0 0 1 2-2Z"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
           strokeLinejoin="round"
           opacity="0.9"
         />
         <path
-          d="M8.2 14h7.6"
+          d="M9 8h6M9 12h6M9 16h4"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
           strokeLinecap="round"
-          opacity="0.7"
+          opacity="0.75"
         />
       </svg>
     );
   }
 
-  // private experiment: beaker + lock
+  // multi-tenant ledger: stacked accounts + nodes
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" className="icon" aria-hidden="true">
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      className="icon"
+      aria-hidden="true"
+    >
       <path
-        d="M10 2v6l-4.3 7.4"
+        d="M7 7h10M7 12h10M7 17h10"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
+        opacity="0.85"
+      />
+      <path
+        d="M5 7a1 1 0 1 0 0.001 0ZM5 12a1 1 0 1 0 0.001 0ZM5 17a1 1 0 1 0 0.001 0Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
         opacity="0.9"
       />
       <path
-        d="M14 2v6l.9 1.6"
+        d="M19 7a1 1 0 1 0 0.001 0ZM19 12a1 1 0 1 0 0.001 0ZM19 17a1 1 0 1 0 0.001 0Z"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.9"
-      />
-      <path
-        d="M7.7 22h5.2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
         opacity="0.75"
-      />
-      <path
-        d="M15.5 13h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        opacity="0.85"
-      />
-      <path
-        d="M16.5 13v-1a2 2 0 1 1 4 0v1"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.85"
       />
     </svg>
   );
@@ -194,13 +206,18 @@ export default function Home() {
   const { msg, setMsg } = useToast();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const linksText = useMemo(() => APPS.map((a) => `${a.name}: ${a.url}`).join("\n"), []);
+  const linksText = useMemo(
+    () => APPS.map((a) => `${a.name}: ${a.url}`).join("\n"),
+    []
+  );
 
-  const [status, setStatus] = useState<Record<TargetKey, StatusRow | undefined>>({
-    POEMS: undefined,
-    EXP: undefined,
-    PEXP: undefined,
-  });
+  const [status, setStatus] = useState<Record<TargetKey, StatusRow | undefined>>(
+    {
+      POEMS: undefined,
+      EXP: undefined,
+      PEXP: undefined,
+    }
+  );
   const [checkedAt, setCheckedAt] = useState<string>("");
 
   const fetchStatus = async () => {
@@ -260,7 +277,9 @@ export default function Home() {
     }
   };
 
-  const checkedLabel = checkedAt ? new Date(checkedAt).toLocaleString() : "—";
+  const checkedLabel = checkedAt
+    ? new Date(checkedAt).toLocaleString()
+    : "—";
 
   return (
     <main className="page">
@@ -273,22 +292,39 @@ export default function Home() {
         <header className="top fade-in">
           <div className="brand">
             <div className="logo">
-              <img src={LOGO_SRC} alt="COTEK" className="logo-img" draggable={false} />
+              <img
+                src={LOGO_SRC}
+                alt="COTEK"
+                className="logo-img"
+                draggable={false}
+              />
             </div>
             <div className="brand-text">
               <div className="brand-title">COTEK</div>
-              <div className="brand-sub">A personal launchpad — poems, experiments, and the private in-between.</div>
+              <div className="brand-sub">
+                Poems for the soul, ledgers for the family, and a platform for
+                many books — three orbits, one gravity.
+              </div>
             </div>
           </div>
 
           <div className="header-actions">
-            <button className="chip" onClick={() => setDrawerOpen(true)} type="button">
+            <button
+              className="chip"
+              onClick={() => setDrawerOpen(true)}
+              type="button"
+            >
               How to use
             </button>
             <button className="chip chip-ghost" onClick={copyLinks} type="button">
               Copy links
             </button>
-            <a className="chip" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("hello from cotek")}`}>
+            <a
+              className="chip"
+              href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+                "hello from cotek"
+              )}`}
+            >
               Say hi
             </a>
           </div>
@@ -301,12 +337,19 @@ export default function Home() {
           <button className="qbtn qbtn-ghost" onClick={fetchStatus} type="button">
             Refresh status <span className="kbd">R</span>
           </button>
-          <button className="qbtn qbtn-ghost" onClick={() => setDrawerOpen(true)} type="button">
+          <button
+            className="qbtn qbtn-ghost"
+            onClick={() => setDrawerOpen(true)}
+            type="button"
+          >
             Map <span className="kbd">H</span>
           </button>
 
           <div className="qhint">
-            Shortcuts: <span className="kbd">1</span> poems <span className="kbd">2</span> exp <span className="kbd">3</span> pexp <span className="kbd">H</span> Help
+            Shortcuts: <span className="kbd">1</span> poems{" "}
+            <span className="kbd">2</span> exp{" "}
+            <span className="kbd">3</span> pexp{" "}
+            <span className="kbd">H</span> Help
           </div>
         </section>
 
@@ -318,10 +361,10 @@ export default function Home() {
             </div>
             <div className="dash-meta">
               <div className="meta-row">
-                <span className="meta-dot" /> Poetry shelf
+                <span className="meta-dot" /> Poems & language
               </div>
               <div className="meta-row">
-                <span className="meta-dot" /> Experiment bench
+                <span className="meta-dot" /> Family & finances
               </div>
             </div>
           </div>
@@ -329,14 +372,14 @@ export default function Home() {
           <div className="dash-card">
             <div className="dash-kpi">
               <div className="kpi-label">Mode</div>
-              <div className="kpi-value">curious</div>
+              <div className="kpi-value">honest</div>
             </div>
             <div className="dash-meta">
               <div className="meta-row">
-                <span className="meta-dot" /> Keep it lightweight
+                <span className="meta-dot" /> Measure what matters
               </div>
               <div className="meta-row">
-                <span className="meta-dot" /> Keep it honest
+                <span className="meta-dot" /> Keep the record clean
               </div>
             </div>
           </div>
@@ -353,7 +396,8 @@ export default function Home() {
                 <span className="meta-dot" /> Checked: {checkedLabel}
               </div>
               <div className="meta-row">
-                <span className="meta-dot" /> Press <span className="kbd">R</span> to refresh
+                <span className="meta-dot" /> Press <span className="kbd">R</span>{" "}
+                to refresh
               </div>
             </div>
           </div>
@@ -365,7 +409,13 @@ export default function Home() {
             const st = statusLabel(row);
 
             return (
-              <Link key={app.key} href={app.url} className={`app-card ${app.glow} fade-in`} target="_blank" rel="noreferrer">
+              <Link
+                key={app.key}
+                href={app.url}
+                className={`app-card ${app.glow} fade-in`}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <div className={`app-banner ${app.gradient}`} />
                 <div className="app-body">
                   <div className="app-topline">
@@ -380,7 +430,9 @@ export default function Home() {
                   <div className="app-title-row">
                     <h2 className="app-title">{app.name}</h2>
                     <div className="app-right">
-                      {app.badge ? <span className="dev-pill">{app.badge}</span> : null}
+                      {app.badge ? (
+                        <span className="dev-pill">{app.badge}</span>
+                      ) : null}
                       <span className="open-pill">Open</span>
                     </div>
                   </div>
@@ -405,22 +457,38 @@ export default function Home() {
         <footer className="footer fade-in">
           <div className="footer-left">
             <span className="footer-mark" />
-            <span>© {new Date().getFullYear()} COTEK • personal index, not a business dashboard.</span>
+            <span>
+              © {new Date().getFullYear()} COTEK • personal index, not a business
+              dashboard.
+            </span>
           </div>
           <div className="footer-right">
-            <span className="footnote">Three tabs. One mind. Many wavelengths.</span>
+            <span className="footnote">
+              Poetry is qualitative. Accounting is quantitative. Both demand
+              truth.
+            </span>
           </div>
         </footer>
       </div>
 
-      <div className={`drawer-backdrop ${drawerOpen ? "show" : ""}`} onClick={() => setDrawerOpen(false)} />
+      <div
+        className={`drawer-backdrop ${drawerOpen ? "show" : ""}`}
+        onClick={() => setDrawerOpen(false)}
+      />
       <aside className={`drawer ${drawerOpen ? "open" : ""}`} aria-hidden={!drawerOpen}>
         <div className="drawer-head">
           <div>
             <div className="drawer-title">Map • COTEK</div>
-            <div className="drawer-sub">A tiny observatory: literature on one axis, experiments on another, privacy as gravity.</div>
+            <div className="drawer-sub">
+              Three systems in one constellation: poems (signal), family ledger
+              (stability), multi-tenant platform (scale).
+            </div>
           </div>
-          <button className="drawer-close" onClick={() => setDrawerOpen(false)} type="button">
+          <button
+            className="drawer-close"
+            onClick={() => setDrawerOpen(false)}
+            type="button"
+          >
             ✕
           </button>
         </div>
@@ -432,7 +500,10 @@ export default function Home() {
               Open a space in a new tab. Use the keyboard when you want velocity.
             </div>
             <div className="drawer-block-text">
-              <span className="kbd">1</span> poems • <span className="kbd">2</span> exp • <span className="kbd">3</span> pexp • <span className="kbd">R</span> refresh • <span className="kbd">Esc</span> close
+              <span className="kbd">1</span> poems • <span className="kbd">2</span>{" "}
+              exp • <span className="kbd">3</span> pexp •{" "}
+              <span className="kbd">R</span> refresh • <span className="kbd">Esc</span>{" "}
+              close
             </div>
           </div>
 
@@ -466,7 +537,8 @@ export default function Home() {
           <div className="drawer-block">
             <div className="drawer-block-title">A tiny note</div>
             <div className="drawer-block-text">
-              This page is just routing — like a mitochondrion for tabs: small, efficient, quietly powering the rest.
+              In ecology: track flows. In finance: track flows. In poetry: track
+              what the flow does to you.
             </div>
           </div>
         </div>
