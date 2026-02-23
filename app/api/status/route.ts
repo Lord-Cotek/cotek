@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type TargetKey = "BMS" | "HR" | "FIN" | "SCM" | "PMS";
+type TargetKey = "POEMS" | "EXP" | "PEXP";
 
 type Target = {
   key: TargetKey;
@@ -18,11 +18,9 @@ type PingResult = {
 };
 
 const TARGETS: Target[] = [
-  { key: "BMS", url: "https://bms.cotek.app" },
-  { key: "HR", url: "https://hr.cotek.app" },
-  { key: "FIN", url: "https://fin.cotek.app" },
-  { key: "SCM", url: "https://scm.cotek.app" },
-  { key: "PMS", url: "https://pms.cotek.app" }, // ✅ PMS added
+  { key: "POEMS", url: "https://poems.cotek.live" },
+  { key: "EXP", url: "https://exp.cotek.live" },
+  { key: "PEXP", url: "https://pexp.cotek.live" },
 ];
 
 async function ping(url: string): Promise<PingResult> {

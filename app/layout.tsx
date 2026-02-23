@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "COTEK Portal",
-  description: "Launchpad for COTEK apps: BMS, HR, FIN.",
+  title: "COTEK • Home",
+  description: "A personal launchpad by Cotek.",
   icons: { icon: "/favicon.ico" },
 };
 
