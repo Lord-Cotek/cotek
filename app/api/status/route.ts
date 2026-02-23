@@ -19,7 +19,7 @@ type PingResult = {
 
 const TARGETS: Target[] = [
   { key: "POEMS", url: "https://poems.cotek.live" },
-  { key: "EXP", url: "https://exp.cotek.app" },
+  { key: "EXP", url: "https://exp.cotek.live" },
   { key: "PEXP", url: "https://pexp.cotek.live" },
 ];
 

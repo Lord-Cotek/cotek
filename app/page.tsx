@@ -42,7 +42,7 @@ const APPS: AppCard[] = [
     name: "exp",
     short:
       "A personal family finance ledger — track budgets, reconcile reality, and keep the household story coherent.",
-    url: "https://exp.cotek.app",
+    url: "https://exp.cotek.live",
     tag: "Family Ledger",
     gradient: "grad-exp",
     glow: "glow-exp",
