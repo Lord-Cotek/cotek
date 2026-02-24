@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 
 import Link from "next/link";
@@ -20,14 +19,6 @@ type AppCard = {
   keyUses: string[];
   badge?: string;
 };
-
-type InvariantKey =
-  | "reconciliation"
-  | "doubleEntry"
-  | "auditTrail"
-  | "tenantIsolation"
-  | "idempotency"
-  | "immutability";
 
 const CONTACT_EMAIL = "tcotek@amrome.com";
 const LOGO_SRC = "/cotek-logo.png";
@@ -88,93 +79,6 @@ type StatusPayload = {
   results: StatusRow[];
 };
 
-function Icon({ kind }: { kind: TargetKey }) {
-  if (kind === "POEMS") {
-    return (
-      <svg width="22" height="22" viewBox="0 0 24 24" className="icon" aria-hidden="true">
-        <path
-          d="M20 4c-7.5.3-13 4.7-15.8 12.7-.3.9.7 1.7 1.5 1.2 1.9-1.1 4-1.8 6.2-2.1"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M9.6 15.8c1.1-2.4 3.5-4.7 7.6-6.8M6 20c3-3 6.8-5.2 11-6"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          opacity="0.85"
-        />
-      </svg>
-    );
-  }
-
-  if (kind === "EXP") {
-    return (
-      <svg width="22" height="22" viewBox="0 0 24 24" className="icon" aria-hidden="true">
-        <path
-          d="M7 3h10a2 2 0 0 1 2 2v16l-2-1-2 1-2-1-2 1-2-1-2 1V5a2 2 0 0 1 2-2Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinejoin="round"
-          opacity="0.9"
-        />
-        <path
-          d="M9 8h6M9 12h6M9 16h4"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          opacity="0.75"
-        />
-      </svg>
-    );
-  }
-
-  // multi-tenant: stacked ledgers / nodes
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" className="icon" aria-hidden="true">
-      <path
-        d="M7 7h10M7 12h10M7 17h10"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.85"
-      />
-      <path
-        d="M5 7a1 1 0 1 0 0.001 0ZM5 12a1 1 0 1 0 0.001 0ZM5 17a1 1 0 1 0 0.001 0Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        opacity="0.9"
-      />
-      <path
-        d="M19 7a1 1 0 1 0 0.001 0ZM19 12a1 1 0 1 0 0.001 0ZM19 17a1 1 0 1 0 0.001 0Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        opacity="0.75"
-      />
-    </svg>
-  );
-}
-
-function useToast() {
-  const [msg, setMsg] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!msg) return;
-    const t = setTimeout(() => setMsg(null), 1900);
-    return () => clearTimeout(t);
-  }, [msg]);
-
-  return { msg, setMsg };
-}
-
 function statusLabel(s?: StatusRow) {
   if (!s) return { text: "Checking…", cls: "st-wait" };
   if (s.ok) return { text: `Online • ${s.ms}ms`, cls: "st-ok" };
@@ -182,106 +86,21 @@ function statusLabel(s?: StatusRow) {
   return { text: "Offline", cls: "st-bad" };
 }
 
-const INVARIANTS: { key: InvariantKey; name: string; desc: string }[] = [
-  {
-    key: "reconciliation",
-    name: "Reconciliation",
-    desc: "Totals converge. Statements match reality. Drift becomes visible.",
-  },
-  {
-    key: "doubleEntry",
-    name: "Double-entry",
-    desc: "Every event conserves value: Σdebits − Σcredits = 0.",
-  },
-  {
-    key: "auditTrail",
-    name: "Audit trail",
-    desc: "Every mutation has provenance: who/what/when/why.",
-  },
-  {
-    key: "tenantIsolation",
-    name: "Tenant isolation",
-    desc: "No cross-tenant leakage: queries are scoped, always.",
-  },
-  {
-    key: "idempotency",
-    name: "Idempotency",
-    desc: "Same command twice → same state once. Events dedupe cleanly.",
-  },
-  {
-    key: "immutability",
-    name: "Immutable journal",
-    desc: "Prefer append-only. Corrections are new entries, not edits.",
-  },
-];
-
-const LS_NOTES = "cotek_os_lab_notes_v1";
-const LS_INVAR = "cotek_os_invariants_v1";
-
 export default function Home() {
-  const { msg, setMsg } = useToast();
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [view, setView] = useState<ViewMode>("systems");
-
-  const [notes, setNotes] = useState<string>("");
-  const [invariants, setInvariants] = useState<Record<InvariantKey, boolean>>({
-    reconciliation: true,
-    doubleEntry: true,
-    auditTrail: true,
-    tenantIsolation: true,
-    idempotency: false,
-    immutability: false,
-  });
-
-  const linksText = useMemo(() => APPS.map((a) => `${a.name}: ${a.url}`).join("\n"), []);
 
   const [status, setStatus] = useState<Record<TargetKey, StatusRow | undefined>>({
     POEMS: undefined,
     EXP: undefined,
     PEXP: undefined,
   });
+
   const [checkedAt, setCheckedAt] = useState<string>("");
 
-  // load persisted local state
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(LS_NOTES);
-      if (saved != null) setNotes(saved);
-    } catch {
-      // ignore
-    }
-    try {
-      const saved = localStorage.getItem(LS_INVAR);
-      if (saved) {
-        const parsed = JSON.parse(saved) as Record<string, unknown>;
-        const next = { ...invariants };
-        (Object.keys(next) as InvariantKey[]).forEach((k) => {
-          const v = parsed[k];
-          if (typeof v === "boolean") next[k] = v;
-        });
-        setInvariants(next);
-      }
-    } catch {
-      // ignore
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(LS_NOTES, notes);
-    } catch {
-      // ignore
-    }
-  }, [notes]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(LS_INVAR, JSON.stringify(invariants));
-    } catch {
-      // ignore
-    }
-  }, [invariants]);
+  const linksText = useMemo(
+    () => APPS.map((a) => `${a.name}: ${a.url}`).join("\n"),
+    []
+  );
 
   const fetchStatus = async () => {
     try {
@@ -307,414 +126,102 @@ export default function Home() {
 
   useEffect(() => {
     fetchStatus();
-    const t = setInterval(fetchStatus, 60_000);
+    const t = setInterval(fetchStatus, 60000);
     return () => clearInterval(t);
   }, []);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDrawerOpen(false);
-
-      if (e.key === "1") window.open(APPS[0].url, "_blank", "noreferrer");
-      if (e.key === "2") window.open(APPS[1].url, "_blank", "noreferrer");
-      if (e.key === "3") window.open(APPS[2].url, "_blank", "noreferrer");
-
-      if (e.key.toLowerCase() === "r") {
-        fetchStatus();
-        setMsg("Refreshed status");
-      }
-
-      if (e.key.toLowerCase() === "h") setDrawerOpen(true);
-
-      if (e.key.toLowerCase() === "v") {
-        setView((v) => (v === "cards" ? "systems" : "cards"));
-        setMsg("Toggled view");
-      }
-
-      if (e.key.toLowerCase() === "l") {
-        // focus the lab notes
-        const el = document.getElementById("lab-notes");
-        el?.scrollIntoView({ behavior: "smooth", block: "start" });
-        (document.getElementById("lab-notes-textarea") as HTMLTextAreaElement | null)?.focus();
-        setMsg("Lab notes");
-      }
-    };
-
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  const openAll = () => {
-    APPS.forEach((a) => window.open(a.url, "_blank", "noreferrer"));
-    setMsg("Opened all spaces");
-  };
-
-  const copyLinks = async () => {
-    try {
-      await navigator.clipboard.writeText(linksText);
-      setMsg("Copied links to clipboard");
-    } catch {
-      setMsg("Could not copy (browser blocked)");
-    }
-  };
-
-  const checkedLabel = checkedAt ? new Date(checkedAt).toLocaleString() : "—";
-
-  const enabledCount = (Object.values(invariants).filter(Boolean).length);
-  const invariantScore = `${enabledCount}/${Object.keys(invariants).length}`;
-
-  const resetNotes = () => {
-    setNotes("");
-    setMsg("Cleared notes");
-  };
-
-  const resetInvariants = () => {
-    setInvariants({
-      reconciliation: true,
-      doubleEntry: true,
-      auditTrail: true,
-      tenantIsolation: true,
-      idempotency: false,
-      immutability: false,
-    });
-    setMsg("Reset invariants");
-  };
+  const checkedLabel = checkedAt
+    ? new Date(checkedAt).toLocaleString()
+    : "—";
 
   return (
     <main className="page">
-      <div className="bg-orb orb-1" />
-      <div className="bg-orb orb-2" />
-      <div className="bg-orb orb-3" />
-      <div className="grid-overlay" />
-
       <div className="container">
-        <header className="top fade-in">
+
+        {/* HEADER */}
+        <header className="top">
           <div className="brand">
             <div className="logo">
-              <img src={LOGO_SRC} alt="COTEK" className="logo-img" draggable={false} />
+              <img src={LOGO_SRC} alt="COTEK" className="logo-img" />
             </div>
-            <div className="brand-text">
-              <div className="brand-title">COTEK OS</div>
+            <div>
+              <div className="brand-title">COTEK ’verse</div>
               <div className="brand-sub">
-                Systems console — signal (poems), household ledger (exp), multi-tenant accounting (pexp).
+                Signal (poems), stability (exp), scale (pexp).
               </div>
             </div>
           </div>
 
           <div className="header-actions">
-            <button className="chip" onClick={() => setDrawerOpen(true)} type="button">
-              How to use
-            </button>
-            <button className="chip chip-ghost" onClick={copyLinks} type="button">
-              Copy links
+            <button
+              className="chip"
+              onClick={() => setView((v) => (v === "cards" ? "systems" : "cards"))}
+            >
+              View: {view === "cards" ? "Cards" : "Systems"}
             </button>
             <button
-              className={`chip ${view === "systems" ? "" : "chip-ghost"}`}
-              onClick={() => setView((v) => (v === "cards" ? "systems" : "cards"))}
-              type="button"
+              className="chip chip-ghost"
+              onClick={async () => {
+                await navigator.clipboard.writeText(linksText);
+              }}
             >
-              View: {view === "cards" ? "Cards" : "Systems"} <span className="kbd">V</span>
+              Copy links
             </button>
-            <a className="chip" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("hello from cotek")}`}>
+            <a
+              className="chip"
+              href={`mailto:${CONTACT_EMAIL}`}
+            >
               Say hi
             </a>
           </div>
         </header>
 
-        <section className="quick fade-in">
-          <button className="qbtn" onClick={openAll} type="button">
-            Open all <span className="kbd">⇧</span>
-          </button>
-          <button className="qbtn qbtn-ghost" onClick={fetchStatus} type="button">
-            Refresh status <span className="kbd">R</span>
-          </button>
-          <button className="qbtn qbtn-ghost" onClick={() => setDrawerOpen(true)} type="button">
-            Map <span className="kbd">H</span>
-          </button>
-
-          <div className="qhint">
-            Shortcuts: <span className="kbd">1</span> poems <span className="kbd">2</span> exp{" "}
-            <span className="kbd">3</span> pexp <span className="kbd">V</span> view{" "}
-            <span className="kbd">R</span> refresh <span className="kbd">L</span> lab
-          </div>
-        </section>
-
-        <section className="dash fade-in">
+        {/* STATUS STRIP */}
+        <section className="dash">
           <div className="dash-card">
-            <div className="dash-kpi">
-              <div className="kpi-label">Model</div>
-              <div className="kpi-value">flows</div>
-            </div>
-            <div className="dash-meta">
-              <div className="meta-row">
-                <span className="meta-dot" /> Signal → Stability → Scale
-              </div>
-              <div className="meta-row">
-                <span className="meta-dot" /> Checked: {checkedLabel}
-              </div>
-            </div>
-          </div>
-
-          <div className="dash-card">
-            <div className="dash-kpi">
-              <div className="kpi-label">Invariants</div>
-              <div className="kpi-value">{invariantScore}</div>
-            </div>
-            <div className="dash-meta">
-              <div className="meta-row">
-                <span className="meta-dot" /> Conservation laws for ledgers
-              </div>
-              <div className="meta-row">
-                <span className="meta-dot" /> Press <span className="kbd">L</span> for lab notes
-              </div>
-            </div>
-          </div>
-
-          <div className="dash-card">
-            <div className="dash-kpi">
-              <div className="kpi-label">Lab</div>
-              <div className="kpi-value">notebook</div>
-            </div>
-            <div className="dash-meta">
-              <div className="meta-row">
-                <span className="meta-dot" /> Local-only (private)
-              </div>
-              <div className="meta-row">
-                <span className="meta-dot" /> Hypotheses → experiments → commits
-              </div>
+            <div className="kpi-label">Model</div>
+            <div className="kpi-value">flows</div>
+            <div className="meta-row">
+              Checked: {checkedLabel}
             </div>
           </div>
         </section>
 
-        {view === "systems" ? (
-          <section className="systems fade-in">
-            <div className="systems-head">
-              <div>
-                <div className="systems-title">Systems View</div>
-                <div className="systems-sub">
-                  Not three apps — three layers. Think ecosystems: energy, nutrients, and governance.
-                </div>
-              </div>
-              <div className="systems-legend">
-                <span className="legend-dot poems" /> Signal
-                <span className="legend-dot exp" /> Stability
-                <span className="legend-dot pexp" /> Scale
-              </div>
-            </div>
+        {/* CARDS */}
+        <section className="cards cards-3">
+          {APPS.map((app) => {
+            const row = status[app.key];
+            const st = statusLabel(row);
 
-            <div className="arch">
-              <a className="arch-node poems" href={APPS[0].url} target="_blank" rel="noreferrer">
-                <div className="arch-name">poems</div>
-                <div className="arch-desc">Signal generator • language & memory</div>
-                <div className={`arch-pill ${statusLabel(status.POEMS).cls}`}>
-                  <span className="st-dot" /> {statusLabel(status.POEMS).text}
-                </div>
-                <div className="arch-mini">Output: meaning. Measurement: resonance.</div>
-              </a>
+            return (
+              <Link
+                key={app.key}
+                href={app.url}
+                className={`app-card ${app.glow}`}
+                target="_blank"
+              >
+                <div className={`app-banner ${app.gradient}`} />
+                <div className="app-body">
+                  <h2>{app.name}</h2>
 
-              <div className="arch-edge">
-                <div className="edge-line" />
-                <div className="edge-label">translates → values</div>
-              </div>
+                  <div className={`status-pill ${st.cls}`}>
+                    {st.text}
+                  </div>
 
-              <a className="arch-node exp" href={APPS[1].url} target="_blank" rel="noreferrer">
-                <div className="arch-name">exp</div>
-                <div className="arch-desc">Household stability • budgets & cashflow</div>
-                <div className={`arch-pill ${statusLabel(status.EXP).cls}`}>
-                  <span className="st-dot" /> {statusLabel(status.EXP).text}
-                </div>
-                <div className="arch-mini">Output: decisions. Measurement: reconciliation.</div>
-              </a>
+                  <p className="app-desc">{app.short}</p>
 
-              <div className="arch-edge">
-                <div className="edge-line" />
-                <div className="edge-label">generalizes → tenants</div>
-              </div>
-
-              <a className="arch-node pexp" href={APPS[2].url} target="_blank" rel="noreferrer">
-                <div className="arch-name">pexp</div>
-                <div className="arch-desc">Scale & governance • multi-tenant accounting</div>
-                <div className={`arch-pill ${statusLabel(status.PEXP).cls}`}>
-                  <span className="st-dot" /> {statusLabel(status.PEXP).text}
-                </div>
-                <div className="arch-mini">Output: institutions. Measurement: auditability.</div>
-              </a>
-            </div>
-
-            <div className="invariants-board">
-              <div className="ib-head">
-                <div>
-                  <div className="ib-title">Invariant Console</div>
-                  <div className="ib-sub">
-                    A lab doesn’t just observe — it defines laws, then tests implementations against them.
+                  <div className="url">
+                    {app.url.replace("https://", "")}
                   </div>
                 </div>
-                <button className="ib-reset" onClick={resetInvariants} type="button">
-                  Reset
-                </button>
-              </div>
+              </Link>
+            );
+          })}
+        </section>
 
-              <div className="ib-grid">
-                {INVARIANTS.map((inv) => (
-                  <label key={inv.key} className="inv">
-                    <input
-                      type="checkbox"
-                      checked={invariants[inv.key]}
-                      onChange={(e) =>
-                        setInvariants((s) => ({ ...s, [inv.key]: e.target.checked }))
-                      }
-                    />
-                    <div className="inv-body">
-                      <div className="inv-name">{inv.name}</div>
-                      <div className="inv-desc">{inv.desc}</div>
-                    </div>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div id="lab-notes" className="lab">
-              <div className="lab-head">
-                <div>
-                  <div className="lab-title">Lab Notes</div>
-                  <div className="lab-sub">
-                    Local-only scratchpad. No network. No endpoints. Pure thought → future commits.
-                  </div>
-                </div>
-                <div className="lab-actions">
-                  <button className="lab-btn lab-btn-ghost" onClick={resetNotes} type="button">
-                    Clear
-                  </button>
-                  <button
-                    className="lab-btn"
-                    onClick={() => {
-                      copyLinks();
-                      setMsg("Copied links (and your notes stay local)");
-                    }}
-                    type="button"
-                  >
-                    Copy links
-                  </button>
-                </div>
-              </div>
-
-              <textarea
-                id="lab-notes-textarea"
-                className="lab-text"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder={`Hypotheses:\n- Tenant isolation via RLS?\n- Journal append-only vs correction events?\n- Account tree encoding?\n\nExperiments:\n- Add idempotency keys\n- Migration plan for exp → pexp core\n\nObservations:\n- What reconciles cleanly? What leaks? What drifts?`}
-              />
-            </div>
-          </section>
-        ) : (
-          <section className="cards cards-3">
-            {APPS.map((app) => {
-              const row = status[app.key];
-              const st = statusLabel(row);
-
-              return (
-                <Link key={app.key} href={app.url} className={`app-card ${app.glow} fade-in`} target="_blank" rel="noreferrer">
-                  <div className={`app-banner ${app.gradient}`} />
-                  <div className="app-body">
-                    <div className="app-topline">
-                      <div className={`app-icon ${app.accent}`}>
-                        <Icon kind={app.key} />
-                      </div>
-                      <div className="app-pill">
-                        <span className="pill-dot" /> {app.tag}
-                      </div>
-                    </div>
-
-                    <div className="app-title-row">
-                      <h2 className="app-title">{app.name}</h2>
-                      <div className="app-right">
-                        {app.badge ? <span className="dev-pill">{app.badge}</span> : null}
-                        <span className="open-pill">Open</span>
-                      </div>
-                    </div>
-
-                    <div className={`status-pill ${st.cls}`}>
-                      <span className="st-dot" />
-                      {st.text}
-                    </div>
-
-                    <p className="app-desc">{app.short}</p>
-
-                    <div className="app-footer">
-                      <div className="url">{app.url.replace("https://", "")}</div>
-                      <div className="hint">Opens in new tab →</div>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </section>
-        )}
-
-        <footer className="footer fade-in">
-          <div className="footer-left">
-            <span className="footer-mark" />
-            <span>© {new Date().getFullYear()} COTEK • systems-first personal console.</span>
-          </div>
-          <div className="footer-right">
-            <span className="footnote">Ledgers obey conservation. Poems expose the error bars.</span>
-          </div>
+        <footer className="footer">
+          © {new Date().getFullYear()} COTEK ’verse • systems-first personal constellation.
         </footer>
-      </div>
-
-      <div className={`drawer-backdrop ${drawerOpen ? "show" : ""}`} onClick={() => setDrawerOpen(false)} />
-      <aside className={`drawer ${drawerOpen ? "open" : ""}`} aria-hidden={!drawerOpen}>
-        <div className="drawer-head">
-          <div>
-            <div className="drawer-title">Map • COTEK OS</div>
-            <div className="drawer-sub">
-              Systems > endpoints. The portal is your model, your invariants, and your notebook.
-            </div>
-          </div>
-          <button className="drawer-close" onClick={() => setDrawerOpen(false)} type="button">
-            ✕
-          </button>
-        </div>
-
-        <div className="drawer-body">
-          <div className="drawer-block">
-            <div className="drawer-block-title">Navigation</div>
-            <div className="drawer-block-text">
-              <span className="kbd">1</span> poems • <span className="kbd">2</span> exp • <span className="kbd">3</span> pexp
-            </div>
-            <div className="drawer-block-text">
-              <span className="kbd">V</span> toggle view • <span className="kbd">R</span> refresh • <span className="kbd">L</span> lab • <span className="kbd">Esc</span> close
-            </div>
-          </div>
-
-          <div className="drawer-block">
-            <div className="drawer-block-title">Lab philosophy</div>
-            <div className="drawer-block-text">
-              Observability is fragile. Invariants are durable. Write the laws here; implement them elsewhere.
-            </div>
-          </div>
-
-          {APPS.map((a) => (
-            <div key={a.key} className="drawer-block">
-              <div className="drawer-block-title">
-                {a.name}
-                {a.badge ? <span className="dev-pill" style={{ marginLeft: 8 }}>{a.badge}</span> : null}
-              </div>
-              <div className="drawer-block-text">{a.what}</div>
-              <ul className="drawer-list">
-                {a.keyUses.map((x) => <li key={x}>{x}</li>)}
-              </ul>
-              <a className="drawer-link" href={a.url} target="_blank" rel="noreferrer">
-                Open {a.name} →
-              </a>
-            </div>
-          ))}
-        </div>
-      </aside>
-
-      <div className={`toast ${msg ? "toast-show" : ""}`} aria-live="polite">
-        {msg ?? ""}
       </div>
     </main>
   );
