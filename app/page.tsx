@@ -21,6 +21,14 @@ type AppCard = {
   badge?: string;
 };
 
+type InvariantKey =
+  | "reconciliation"
+  | "doubleEntry"
+  | "auditTrail"
+  | "tenantIsolation"
+  | "idempotency"
+  | "immutability";
+
 const CONTACT_EMAIL = "tcotek@amrome.com";
 const LOGO_SRC = "/cotek-logo.png";
 
@@ -28,7 +36,7 @@ const APPS: AppCard[] = [
   {
     key: "POEMS",
     name: "poems",
-    short: "A small library of lines — draft, publish, and let language breathe.",
+    short: "A library of lines — draft, publish, and let language breathe.",
     url: "https://poems.cotek.app",
     tag: "Signal",
     gradient: "grad-poems",
@@ -80,28 +88,6 @@ type StatusPayload = {
   results: StatusRow[];
 };
 
-type TelemetryFetch = {
-  ok: boolean;
-  status: number;
-  ms: number;
-  data?: any;
-  error?: string;
-};
-
-type TelemetryResult = {
-  key: TargetKey;
-  baseUrl: string;
-  checks: {
-    summary: TelemetryFetch;
-    meta: TelemetryFetch;
-  };
-};
-
-type TelemetryPayload = {
-  checkedAt: string;
-  results: TelemetryResult[];
-};
-
 function Icon({ kind }: { kind: TargetKey }) {
   if (kind === "POEMS") {
     return (
@@ -148,6 +134,7 @@ function Icon({ kind }: { kind: TargetKey }) {
     );
   }
 
+  // multi-tenant: stacked ledgers / nodes
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" className="icon" aria-hidden="true">
       <path
@@ -195,33 +182,56 @@ function statusLabel(s?: StatusRow) {
   return { text: "Offline", cls: "st-bad" };
 }
 
-function telemetryChip(t?: TelemetryFetch) {
-  if (!t) return { text: "Telemetry: —", cls: "t-wait" };
-  if (t.status === 404 || t.error === "not_implemented") return { text: "Telemetry: none", cls: "t-none" };
-  if (t.ok) return { text: `Telemetry: ok • ${t.ms}ms`, cls: "t-ok" };
-  if (t.status) return { text: `Telemetry: ${t.status}`, cls: "t-warn" };
-  return { text: "Telemetry: offline", cls: "t-bad" };
-}
+const INVARIANTS: { key: InvariantKey; name: string; desc: string }[] = [
+  {
+    key: "reconciliation",
+    name: "Reconciliation",
+    desc: "Totals converge. Statements match reality. Drift becomes visible.",
+  },
+  {
+    key: "doubleEntry",
+    name: "Double-entry",
+    desc: "Every event conserves value: Σdebits − Σcredits = 0.",
+  },
+  {
+    key: "auditTrail",
+    name: "Audit trail",
+    desc: "Every mutation has provenance: who/what/when/why.",
+  },
+  {
+    key: "tenantIsolation",
+    name: "Tenant isolation",
+    desc: "No cross-tenant leakage: queries are scoped, always.",
+  },
+  {
+    key: "idempotency",
+    name: "Idempotency",
+    desc: "Same command twice → same state once. Events dedupe cleanly.",
+  },
+  {
+    key: "immutability",
+    name: "Immutable journal",
+    desc: "Prefer append-only. Corrections are new entries, not edits.",
+  },
+];
 
-function pickEngine(meta: any): string | null {
-  if (!meta || typeof meta !== "object") return null;
-  return (
-    meta.engineVersion ??
-    meta.engine ??
-    meta.ledgerEngine ??
-    null
-  );
-}
-
-function pickVersion(meta: any): string | null {
-  if (!meta || typeof meta !== "object") return null;
-  return meta.version ?? meta.buildVersion ?? meta.commit ?? null;
-}
+const LS_NOTES = "cotek_os_lab_notes_v1";
+const LS_INVAR = "cotek_os_invariants_v1";
 
 export default function Home() {
   const { msg, setMsg } = useToast();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [view, setView] = useState<ViewMode>("cards");
+  const [view, setView] = useState<ViewMode>("systems");
+
+  const [notes, setNotes] = useState<string>("");
+  const [invariants, setInvariants] = useState<Record<InvariantKey, boolean>>({
+    reconciliation: true,
+    doubleEntry: true,
+    auditTrail: true,
+    tenantIsolation: true,
+    idempotency: false,
+    immutability: false,
+  });
 
   const linksText = useMemo(() => APPS.map((a) => `${a.name}: ${a.url}`).join("\n"), []);
 
@@ -232,12 +242,46 @@ export default function Home() {
   });
   const [checkedAt, setCheckedAt] = useState<string>("");
 
-  const [telemetry, setTelemetry] = useState<Record<TargetKey, TelemetryResult | undefined>>({
-    POEMS: undefined,
-    EXP: undefined,
-    PEXP: undefined,
-  });
-  const [telemetryAt, setTelemetryAt] = useState<string>("");
+  // load persisted local state
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(LS_NOTES);
+      if (saved != null) setNotes(saved);
+    } catch {
+      // ignore
+    }
+    try {
+      const saved = localStorage.getItem(LS_INVAR);
+      if (saved) {
+        const parsed = JSON.parse(saved) as Record<string, unknown>;
+        const next = { ...invariants };
+        (Object.keys(next) as InvariantKey[]).forEach((k) => {
+          const v = parsed[k];
+          if (typeof v === "boolean") next[k] = v;
+        });
+        setInvariants(next);
+      }
+    } catch {
+      // ignore
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(LS_NOTES, notes);
+    } catch {
+      // ignore
+    }
+  }, [notes]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(LS_INVAR, JSON.stringify(invariants));
+    } catch {
+      // ignore
+    }
+  }, [invariants]);
 
   const fetchStatus = async () => {
     try {
@@ -261,37 +305,9 @@ export default function Home() {
     }
   };
 
-  const fetchTelemetry = async () => {
-    try {
-      const res = await fetch("/api/telemetry", { cache: "no-store" });
-      const data = (await res.json()) as TelemetryPayload;
-
-      const map: Record<TargetKey, TelemetryResult | undefined> = {
-        POEMS: undefined,
-        EXP: undefined,
-        PEXP: undefined,
-      };
-
-      data.results.forEach((r) => {
-        map[r.key] = r;
-      });
-
-      setTelemetry(map);
-      setTelemetryAt(data.checkedAt);
-    } catch {
-      // ignore
-    }
-  };
-
   useEffect(() => {
     fetchStatus();
-    fetchTelemetry();
-
-    const t = setInterval(() => {
-      fetchStatus();
-      fetchTelemetry();
-    }, 90_000);
-
+    const t = setInterval(fetchStatus, 60_000);
     return () => clearInterval(t);
   }, []);
 
@@ -305,8 +321,7 @@ export default function Home() {
 
       if (e.key.toLowerCase() === "r") {
         fetchStatus();
-        fetchTelemetry();
-        setMsg("Refreshed signals");
+        setMsg("Refreshed status");
       }
 
       if (e.key.toLowerCase() === "h") setDrawerOpen(true);
@@ -314,6 +329,14 @@ export default function Home() {
       if (e.key.toLowerCase() === "v") {
         setView((v) => (v === "cards" ? "systems" : "cards"));
         setMsg("Toggled view");
+      }
+
+      if (e.key.toLowerCase() === "l") {
+        // focus the lab notes
+        const el = document.getElementById("lab-notes");
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+        (document.getElementById("lab-notes-textarea") as HTMLTextAreaElement | null)?.focus();
+        setMsg("Lab notes");
       }
     };
 
@@ -336,13 +359,26 @@ export default function Home() {
   };
 
   const checkedLabel = checkedAt ? new Date(checkedAt).toLocaleString() : "—";
-  const telemetryLabel = telemetryAt ? new Date(telemetryAt).toLocaleString() : "—";
 
-  // Architecture lab: engine mismatch detector (only if both meta endpoints exist)
-  const expEngine = pickEngine(telemetry.EXP?.checks?.meta?.data);
-  const pexpEngine = pickEngine(telemetry.PEXP?.checks?.meta?.data);
-  const engineMismatch =
-    expEngine && pexpEngine && expEngine !== pexpEngine ? `${expEngine} ≠ ${pexpEngine}` : null;
+  const enabledCount = (Object.values(invariants).filter(Boolean).length);
+  const invariantScore = `${enabledCount}/${Object.keys(invariants).length}`;
+
+  const resetNotes = () => {
+    setNotes("");
+    setMsg("Cleared notes");
+  };
+
+  const resetInvariants = () => {
+    setInvariants({
+      reconciliation: true,
+      doubleEntry: true,
+      auditTrail: true,
+      tenantIsolation: true,
+      idempotency: false,
+      immutability: false,
+    });
+    setMsg("Reset invariants");
+  };
 
   return (
     <main className="page">
@@ -389,16 +425,8 @@ export default function Home() {
           <button className="qbtn" onClick={openAll} type="button">
             Open all <span className="kbd">⇧</span>
           </button>
-          <button
-            className="qbtn qbtn-ghost"
-            onClick={() => {
-              fetchStatus();
-              fetchTelemetry();
-              setMsg("Refreshed signals");
-            }}
-            type="button"
-          >
-            Refresh signals <span className="kbd">R</span>
+          <button className="qbtn qbtn-ghost" onClick={fetchStatus} type="button">
+            Refresh status <span className="kbd">R</span>
           </button>
           <button className="qbtn qbtn-ghost" onClick={() => setDrawerOpen(true)} type="button">
             Map <span className="kbd">H</span>
@@ -407,7 +435,7 @@ export default function Home() {
           <div className="qhint">
             Shortcuts: <span className="kbd">1</span> poems <span className="kbd">2</span> exp{" "}
             <span className="kbd">3</span> pexp <span className="kbd">V</span> view{" "}
-            <span className="kbd">R</span> refresh
+            <span className="kbd">R</span> refresh <span className="kbd">L</span> lab
           </div>
         </section>
 
@@ -429,44 +457,31 @@ export default function Home() {
 
           <div className="dash-card">
             <div className="dash-kpi">
-              <div className="kpi-label">Telemetry</div>
-              <div className="kpi-value">proxy</div>
+              <div className="kpi-label">Invariants</div>
+              <div className="kpi-value">{invariantScore}</div>
             </div>
             <div className="dash-meta">
               <div className="meta-row">
-                <span className="meta-dot" /> Updated: {telemetryLabel}
+                <span className="meta-dot" /> Conservation laws for ledgers
               </div>
               <div className="meta-row">
-                <span className="meta-dot" /> Optional: /api/summary, /api/meta
+                <span className="meta-dot" /> Press <span className="kbd">L</span> for lab notes
               </div>
             </div>
           </div>
 
           <div className="dash-card">
             <div className="dash-kpi">
-              <div className="kpi-label">Engine</div>
-              <div className="kpi-value">{engineMismatch ? "drift" : "aligned"}</div>
+              <div className="kpi-label">Lab</div>
+              <div className="kpi-value">notebook</div>
             </div>
             <div className="dash-meta">
-              {engineMismatch ? (
-                <>
-                  <div className="meta-row">
-                    <span className="meta-dot warn" /> Mismatch: {engineMismatch}
-                  </div>
-                  <div className="meta-row">
-                    <span className="meta-dot warn" /> Multi-tenant lab wants consistency
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="meta-row">
-                    <span className="meta-dot" /> exp ↔ pexp engine signal
-                  </div>
-                  <div className="meta-row">
-                    <span className="meta-dot" /> (shows drift only if both meta endpoints exist)
-                  </div>
-                </>
-              )}
+              <div className="meta-row">
+                <span className="meta-dot" /> Local-only (private)
+              </div>
+              <div className="meta-row">
+                <span className="meta-dot" /> Hypotheses → experiments → commits
+              </div>
             </div>
           </div>
         </section>
@@ -494,9 +509,7 @@ export default function Home() {
                 <div className={`arch-pill ${statusLabel(status.POEMS).cls}`}>
                   <span className="st-dot" /> {statusLabel(status.POEMS).text}
                 </div>
-                <div className={`arch-tpill ${telemetryChip(telemetry.POEMS?.checks?.meta).cls}`}>
-                  {telemetryChip(telemetry.POEMS?.checks?.meta).text}
-                </div>
+                <div className="arch-mini">Output: meaning. Measurement: resonance.</div>
               </a>
 
               <div className="arch-edge">
@@ -510,16 +523,7 @@ export default function Home() {
                 <div className={`arch-pill ${statusLabel(status.EXP).cls}`}>
                   <span className="st-dot" /> {statusLabel(status.EXP).text}
                 </div>
-                <div className="arch-meta">
-                  <div className="arch-meta-row">
-                    <span className="muted">engine:</span>{" "}
-                    {pickEngine(telemetry.EXP?.checks?.meta?.data) ?? "—"}
-                  </div>
-                  <div className="arch-meta-row">
-                    <span className="muted">version:</span>{" "}
-                    {pickVersion(telemetry.EXP?.checks?.meta?.data) ?? "—"}
-                  </div>
-                </div>
+                <div className="arch-mini">Output: decisions. Measurement: reconciliation.</div>
               </a>
 
               <div className="arch-edge">
@@ -533,54 +537,74 @@ export default function Home() {
                 <div className={`arch-pill ${statusLabel(status.PEXP).cls}`}>
                   <span className="st-dot" /> {statusLabel(status.PEXP).text}
                 </div>
-                <div className="arch-meta">
-                  <div className="arch-meta-row">
-                    <span className="muted">engine:</span>{" "}
-                    {pickEngine(telemetry.PEXP?.checks?.meta?.data) ?? "—"}
-                  </div>
-                  <div className="arch-meta-row">
-                    <span className="muted">version:</span>{" "}
-                    {pickVersion(telemetry.PEXP?.checks?.meta?.data) ?? "—"}
-                  </div>
-                </div>
+                <div className="arch-mini">Output: institutions. Measurement: auditability.</div>
               </a>
             </div>
 
-            <div className="telemetry-board">
-              <div className="t-title">Telemetry Board</div>
-              <div className="t-sub">
-                If your apps implement <span className="mono">/api/summary</span> and{" "}
-                <span className="mono">/api/meta</span>, this becomes your observability membrane.
+            <div className="invariants-board">
+              <div className="ib-head">
+                <div>
+                  <div className="ib-title">Invariant Console</div>
+                  <div className="ib-sub">
+                    A lab doesn’t just observe — it defines laws, then tests implementations against them.
+                  </div>
+                </div>
+                <button className="ib-reset" onClick={resetInvariants} type="button">
+                  Reset
+                </button>
               </div>
 
-              <div className="t-grid">
-                {APPS.map((a) => {
-                  const tr = telemetry[a.key];
-                  const metaChip = telemetryChip(tr?.checks?.meta);
-                  const sumChip = telemetryChip(tr?.checks?.summary);
-
-                  return (
-                    <div key={a.key} className="t-card">
-                      <div className="t-row">
-                        <div className="t-name">{a.name}</div>
-                        <div className="t-url">{a.url.replace("https://", "")}</div>
-                      </div>
-                      <div className={`t-chip ${metaChip.cls}`}>{metaChip.text}</div>
-                      <div className={`t-chip ${sumChip.cls}`}>{sumChip.text}</div>
-                      <div className="t-mini">
-                        <div>
-                          <span className="muted">engine:</span>{" "}
-                          {pickEngine(tr?.checks?.meta?.data) ?? "—"}
-                        </div>
-                        <div>
-                          <span className="muted">version:</span>{" "}
-                          {pickVersion(tr?.checks?.meta?.data) ?? "—"}
-                        </div>
-                      </div>
+              <div className="ib-grid">
+                {INVARIANTS.map((inv) => (
+                  <label key={inv.key} className="inv">
+                    <input
+                      type="checkbox"
+                      checked={invariants[inv.key]}
+                      onChange={(e) =>
+                        setInvariants((s) => ({ ...s, [inv.key]: e.target.checked }))
+                      }
+                    />
+                    <div className="inv-body">
+                      <div className="inv-name">{inv.name}</div>
+                      <div className="inv-desc">{inv.desc}</div>
                     </div>
-                  );
-                })}
+                  </label>
+                ))}
               </div>
+            </div>
+
+            <div id="lab-notes" className="lab">
+              <div className="lab-head">
+                <div>
+                  <div className="lab-title">Lab Notes</div>
+                  <div className="lab-sub">
+                    Local-only scratchpad. No network. No endpoints. Pure thought → future commits.
+                  </div>
+                </div>
+                <div className="lab-actions">
+                  <button className="lab-btn lab-btn-ghost" onClick={resetNotes} type="button">
+                    Clear
+                  </button>
+                  <button
+                    className="lab-btn"
+                    onClick={() => {
+                      copyLinks();
+                      setMsg("Copied links (and your notes stay local)");
+                    }}
+                    type="button"
+                  >
+                    Copy links
+                  </button>
+                </div>
+              </div>
+
+              <textarea
+                id="lab-notes-textarea"
+                className="lab-text"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder={`Hypotheses:\n- Tenant isolation via RLS?\n- Journal append-only vs correction events?\n- Account tree encoding?\n\nExperiments:\n- Add idempotency keys\n- Migration plan for exp → pexp core\n\nObservations:\n- What reconciles cleanly? What leaks? What drifts?`}
+              />
             </div>
           </section>
         ) : (
@@ -588,17 +612,9 @@ export default function Home() {
             {APPS.map((app) => {
               const row = status[app.key];
               const st = statusLabel(row);
-              const tmeta = telemetry[app.key]?.checks?.meta;
-              const tchip = telemetryChip(tmeta);
 
               return (
-                <Link
-                  key={app.key}
-                  href={app.url}
-                  className={`app-card ${app.glow} fade-in`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <Link key={app.key} href={app.url} className={`app-card ${app.glow} fade-in`} target="_blank" rel="noreferrer">
                   <div className={`app-banner ${app.gradient}`} />
                   <div className="app-body">
                     <div className="app-topline">
@@ -623,8 +639,6 @@ export default function Home() {
                       {st.text}
                     </div>
 
-                    <div className={`tele-pill ${tchip.cls}`}>{tchip.text}</div>
-
                     <p className="app-desc">{app.short}</p>
 
                     <div className="app-footer">
@@ -644,7 +658,7 @@ export default function Home() {
             <span>© {new Date().getFullYear()} COTEK • systems-first personal console.</span>
           </div>
           <div className="footer-right">
-            <span className="footnote">In every ledger: conservation laws. In every poem: measurement error.</span>
+            <span className="footnote">Ledgers obey conservation. Poems expose the error bars.</span>
           </div>
         </footer>
       </div>
@@ -655,7 +669,7 @@ export default function Home() {
           <div>
             <div className="drawer-title">Map • COTEK OS</div>
             <div className="drawer-sub">
-              A lab for layers: signal → household → tenants. Add telemetry endpoints and it becomes a live instrument.
+              Systems > endpoints. The portal is your model, your invariants, and your notebook.
             </div>
           </div>
           <button className="drawer-close" onClick={() => setDrawerOpen(false)} type="button">
@@ -670,19 +684,14 @@ export default function Home() {
               <span className="kbd">1</span> poems • <span className="kbd">2</span> exp • <span className="kbd">3</span> pexp
             </div>
             <div className="drawer-block-text">
-              <span className="kbd">V</span> toggle view • <span className="kbd">R</span> refresh • <span className="kbd">Esc</span> close
+              <span className="kbd">V</span> toggle view • <span className="kbd">R</span> refresh • <span className="kbd">L</span> lab • <span className="kbd">Esc</span> close
             </div>
           </div>
 
           <div className="drawer-block">
-            <div className="drawer-block-title">Telemetry contract</div>
+            <div className="drawer-block-title">Lab philosophy</div>
             <div className="drawer-block-text">
-              If your apps expose these endpoints, the portal will read them automatically:
-            </div>
-            <div className="drawer-block-text mono">GET /api/meta</div>
-            <div className="drawer-block-text mono">GET /api/summary</div>
-            <div className="drawer-block-text">
-              Start minimal: return <span className="mono">{"{ version, engineVersion }"}</span>.
+              Observability is fragile. Invariants are durable. Write the laws here; implement them elsewhere.
             </div>
           </div>
 

@@ -36,7 +36,7 @@ async function ping(url: string): Promise<PingResult> {
     const ms = Date.now() - start;
     const status = res.status;
 
-    // Treat 2xx and 3xx as reachable/healthy (3xx because redirect: "manual")
+    // Treat 2xx and 3xx as reachable (3xx because redirect: "manual")
     const ok = status >= 200 && status < 400;
 
     return { ok, status, ms };
