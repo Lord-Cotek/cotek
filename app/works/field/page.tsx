@@ -87,10 +87,14 @@ export default function FieldPage() {
           <article className="card">
             <div className="card-eyebrow">Certified</div>
             <h3 className="card-title">{cert?.name ?? "Certified Diver"}</h3>
+            <div className="card-meta">
+              {cert?.body ? `${cert.body} ` : ""}
+              {cert?.diverNumber ? `· No. ${cert.diverNumber} ` : ""}
+              {cert?.issuedAt ? `· issued ${cert.issuedAt}` : ""}
+            </div>
             <p className="card-body">
-              {cert?.body && cert.body !== "TODO(temi)"
-                ? `Issuing body: ${cert.body}.`
-                : "Issuing body to confirm — diving is a discipline of less."}
+              {cert?.school ? <>Trained at <strong>{cert.school}</strong>{cert.instructor ? <> with instructor <strong>{cert.instructor}</strong></> : null}. </> : null}
+              Diving is a discipline of less.
             </p>
           </article>
         </div>

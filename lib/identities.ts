@@ -78,8 +78,14 @@ export const TEMI = {
     },
   ],
   certifications: [
-    // TODO(temi): confirm the issuing body (PADI / SSI / CMAS / etc).
-    { name: "Certified Diver", body: "TODO(temi)" as string },
+    {
+      name: "PADI Open Water Diver",
+      body: "PADI",
+      diverNumber: "2602UD0947",
+      issuedAt: "2026-02-12",
+      instructor: "Ibrahim Al Dubai",
+      school: "Al Jazeera Diving & Swimming Centre",
+    },
   ],
   affiliations: [
     { name: "TGN Ghana", url: "https://tgnghana.org/" },
