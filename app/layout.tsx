@@ -93,7 +93,7 @@ function PersonJsonLd() {
       ...TEMI.affiliations.map((a) => ({
         "@type": "Organization",
         name: a.name,
-        ...(a.url ? { url: a.url } : {}),
+        ...("url" in a ? { url: a.url } : {}),
       })),
       {
         "@type": "Organization",
