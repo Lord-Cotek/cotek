@@ -1,15 +1,9 @@
 // app/api/status/route.ts
 import { NextResponse } from "next/server";
+import { COTEK_SUBDOMAINS } from "@/lib/identities";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-type TargetKey = "POEMS" | "EXP" | "PEXP";
-
-type Target = {
-  key: TargetKey;
-  url: string;
-};
 
 type PingResult = {
   ok: boolean;
@@ -17,11 +11,7 @@ type PingResult = {
   ms: number;
 };
 
-const TARGETS: Target[] = [
-  { key: "POEMS", url: "https://poems.cotek.app" },
-  { key: "EXP", url: "https://exp.cotek.live" },
-  { key: "PEXP", url: "https://pexp.cotek.live" },
-];
+const TARGETS = COTEK_SUBDOMAINS;
 
 async function ping(url: string): Promise<PingResult> {
   const start = Date.now();
