@@ -106,8 +106,16 @@ export type Book = {
 
 const BOOKS_FALLBACK: Book[] = [
   {
-    title: "Orchids and Tamarind",
-    link: "https://www.bol.com/nl/nl/p/orchids-and-tamarind/9200000104076998/",
+    title: "Orchids and Tamarind: The First Book on Life vs Love",
+    link: "https://www.amazon.com/stores/Temi-Cotek/author/B08PSN6D91",
+  },
+  {
+    title: "Infinity Wall: The Second Book on Life vs Love",
+    link: "https://www.amazon.in/Infinity-Wall-Second-Book-Life/dp/B08R9F3711",
+  },
+  {
+    title: "The Cerulean Monster",
+    link: "https://us.amazon.com/Cerulean-Monster-Temi-Cotek/dp/B093RZJKJW",
   },
 ];
 

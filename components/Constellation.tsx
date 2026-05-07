@@ -16,7 +16,7 @@ import { ROOMS } from "@/lib/identities";
 type Room = (typeof ROOMS)[number];
 
 const DESCRIPTIONS: Record<Room["slug"], string> = {
-  apps: "Software studio output — PExP, ProMan, Sci-Cotek, BMS, Poems, exp, iSignature.",
+  apps: "Software studio output — PExP, ProMan, Sci-Cotek, BMS, Poems, exp.",
   books: "Published works, beginning with Orchids and Tamarind.",
   poems: "A library of his lines — live from poems.cotek.app.",
   research: "Independent and IISER-era papers; ResearchGate and Academia.",
@@ -27,13 +27,13 @@ const DESCRIPTIONS: Record<Room["slug"], string> = {
 
 // Layout positions (percent of the SVG box). Hand-placed so adjacencies feel right.
 const POS: Record<Room["slug"], { x: number; y: number }> = {
-  apps:     { x: 18, y: 30 },
-  books:    { x: 38, y: 16 },
-  poems:    { x: 62, y: 22 },
-  research: { x: 82, y: 36 },
-  sermons:  { x: 76, y: 70 },
-  photos:   { x: 24, y: 72 },
-  field:    { x: 46, y: 56 },
+  apps:     { x: 16, y: 28 },
+  books:    { x: 40, y: 14 },
+  poems:    { x: 64, y: 22 },
+  research: { x: 86, y: 36 },
+  sermons:  { x: 78, y: 70 },
+  photos:   { x: 22, y: 74 },
+  field:    { x: 50, y: 50 },
 };
 
 // Pairs that overlap conceptually. Sermons↔Field is the bright one.
@@ -110,9 +110,10 @@ export default function Constellation() {
           {/* Stars */}
           {ROOMS.map((r) => {
             const p = POS[r.slug];
-            const size = 1.4 * r.weight;
+            const size = 0.9 * r.weight;
             const isFocus = focused === r.slug;
             const isHover = hover === r.slug;
+            const active = isFocus || isHover;
             return (
               <g
                 key={r.slug}
@@ -136,7 +137,7 @@ export default function Constellation() {
                   className="star-glow"
                   cx={p.x}
                   cy={p.y}
-                  r={size * 2.4}
+                  r={size * 2.6}
                   fill="white"
                   fillOpacity={isFocus ? 0.18 : isHover ? 0.12 : 0.06}
                 />
@@ -145,32 +146,30 @@ export default function Constellation() {
                   cx={p.x}
                   cy={p.y}
                   r={size}
-                  fill={isFocus || isHover ? "rgba(255,255,255,0.98)" : "rgba(255,255,255,0.78)"}
+                  fill={active ? "rgba(255,255,255,0.98)" : "rgba(255,255,255,0.78)"}
                 />
                 <text
-                  className="star-label"
                   x={p.x}
-                  y={p.y + size * 2.6 + 1.2}
+                  y={p.y + size + 3.6}
                   textAnchor="middle"
+                  fontSize={2.4}
+                  fontFamily="var(--font-serif)"
+                  fill="rgba(255,255,255,0.92)"
                 >
                   {r.title}
                 </text>
-                {(isFocus || isHover) ? (
-                  <text
-                    className="star-cap"
-                    x={p.x}
-                    y={p.y + size * 2.6 + 4.2}
-                    textAnchor="middle"
-                  >
-                    {DESCRIPTIONS[r.slug]}
-                  </text>
-                ) : null}
               </g>
             );
           })}
         </svg>
 
-        <div className="legend">Constellation · arrow keys to move · enter to open</div>
+        {/* Description strip — outside the SVG so it never collides with labels. */}
+        <div className="const-desc" aria-live="polite">
+          <strong>{ROOMS.find((r) => r.slug === focused)?.title}</strong>
+          <span>{DESCRIPTIONS[focused]}</span>
+        </div>
+
+        <div className="legend">Arrow keys · Enter to open · 1–7 to jump</div>
         <div className="hint">Bright line: sermons ↔ field</div>
       </div>
 

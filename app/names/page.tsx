@@ -20,6 +20,8 @@ const HANDLE_LABELS: Record<string, string> = {
   amazon: "Amazon",
   allpoetry: "AllPoetry",
   biography_omics: "OMICS biography (IISER)",
+  googleplay_books: "Google Play Books",
+  everand: "Everand",
 };
 
 export default function NamesPage() {

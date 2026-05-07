@@ -5,7 +5,7 @@ import { TEMI } from "@/lib/identities";
 export const metadata: Metadata = {
   title: "Apps — Cotek App FZ-LLC",
   description:
-    "Software studio output: PExP, ProMan, Sci-Cotek, BMS, Poems, exp, iSignature.",
+    "Software studio output: PExP, ProMan, Sci-Cotek, BMS, Poems, exp.",
 };
 
 export default function AppsPage() {

@@ -25,10 +25,10 @@ export default function AboutPage() {
           Temitayo Cotek, Cotek Temitayo, Omogbolahan, Kadiri, and simply
           Cotek — was born under more names than most men keep, and chose
           to keep all of them. The fact has been useful. It has also been
-          honest. He grew up where the same man could be addressed, in one
-          afternoon, by his given name, his family name, his praise name,
-          and his nickname; and learned early that plurality was not the
-          opposite of integrity.
+          honest. He grew up Nigerian; studied in Bangalore, India; and
+          made a home in Ras Al Khaimah, in the United Arab Emirates.
+          He learned early — and across three continents — that plurality
+          was not the opposite of integrity.
         </p>
         <p>
           By trade he is an environmentalist. He spent years at Action
@@ -46,16 +46,21 @@ export default function AboutPage() {
           He is also the founder of <strong>Cotek App FZ-LLC</strong>,
           registered at RAKEZ in Ras Al Khaimah — a small software
           studio that builds tools around stewardship and accountability:
-          PExP, ProMan, Sci-Cotek, BMS, exp, Poems, iSignature. Each one
+          PExP, ProMan, Sci-Cotek, BMS, exp, and Poems. Each one
           is a ledger of a kind.
         </p>
         <p>
-          He is a published author (<em>Orchids and Tamarind</em>, on
-          Bol, Amazon, and OpenLibrary), a poet (AllPoetry, and his own
-          <a href="https://poems.cotek.app" target="_blank" rel="noreferrer"> poems.cotek.app</a>),
-          a researcher (ResearchGate, Academia, IISER alumnus), a
-          photographer (Unsplash, where he posts as @cotek), and a
-          Bible teacher at <strong>RAK Church</strong>. He is a husband.
+          He is a published author of three books — the <em>Life vs Love</em>
+          trilogy (<em>Orchids and Tamarind</em>, 2018; <em>Infinity Wall</em>,
+          2020) and <em>The Cerulean Monster</em> (2021, written across 113
+          days in early 2021). They live on Amazon, Bol, Google Play,
+          Everand, and OpenLibrary. He is a poet (AllPoetry, and his own
+          <a href="https://poems.cotek.app" target="_blank" rel="noreferrer"> poems.cotek.app</a>);
+          a researcher (ResearchGate, Academia); a photographer
+          (<a href={"https://unsplash.com/@cotek"} target="_blank" rel="noreferrer">Unsplash, where he posts as @cotek</a>);
+          and a Bible teacher at <strong>RAK Church</strong>. He is a husband.
+          On Instagram, the handle <code>life_vs_love_</code> is named for
+          the trilogy.
         </p>
         <p>
           The five letters of <strong>COTEK</strong> are five of his

@@ -31,7 +31,9 @@ export default async function BooksPage() {
         <div className="room-eyebrow">/ works / books</div>
         <h1 className="room-title">Pages, with their own weather.</h1>
         <p className="room-deck">
-          Beginning with <em>Orchids and Tamarind</em>. Augmented as the
+          The <em>Life vs Love</em> trilogy
+          (<em>Orchids and Tamarind</em>, 2018; <em>Infinity Wall</em>, 2020)
+          and <em>The Cerulean Monster</em> (2021). Augmented as the
           OpenLibrary feed grows.
         </p>
         <div className="stamp">

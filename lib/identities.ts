@@ -49,6 +49,9 @@ export const TEMI = {
     allpoetry: "https://allpoetry.com/Temi+Cotek",
     biography_omics:
       "https://biography.omicsonline.org/india/indian-institute-of-science-education-and-research/cotek-temitayo-2169204",
+    googleplay_books:
+      "https://play.google.com/store/books/details/Orchids_and_Tamarind_The_First_Book_on_Life_Vs_Lov?id=rNGBDwAAQBAJ",
+    everand: "https://www.everand.com/author/564720121/Temi-Cotek",
   },
   career: [
     {
@@ -129,16 +132,29 @@ export const TEMI = {
         url: "https://exp.cotek.live",
         what: "A household ledger.",
       },
-      {
-        name: "iSignature",
-        url: "https://isignature.cotek.app",
-        what: "A small signing tool.",
-      },
     ],
+    // The "Life vs Love" trilogy plus The Cerulean Monster.
     books: [
       {
-        title: "Orchids and Tamarind",
+        title: "Orchids and Tamarind: The First Book on Life vs Love",
+        year: 2018,
+        series: "Life vs Love",
+        seriesIndex: 1,
+        link: "https://www.amazon.com/stores/Temi-Cotek/author/B08PSN6D91",
         bol: "https://www.bol.com/nl/nl/p/orchids-and-tamarind/9200000104076998/",
+      },
+      {
+        title: "Infinity Wall: The Second Book on Life vs Love",
+        year: 2020,
+        series: "Life vs Love",
+        seriesIndex: 2,
+        link: "https://www.amazon.in/Infinity-Wall-Second-Book-Life/dp/B08R9F3711",
+      },
+      {
+        title: "The Cerulean Monster",
+        year: 2021,
+        link: "https://us.amazon.com/Cerulean-Monster-Temi-Cotek/dp/B093RZJKJW",
+        note: "Poems written across 113 days in early 2021.",
       },
       // augmented at runtime via OpenLibrary feed
     ],
