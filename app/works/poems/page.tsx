@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { getPoemsFeed, lastSeen } from "@/lib/feeds";
 import { TEMI } from "@/lib/identities";
+import RoomsStrip from "@/components/RoomsStrip";
 
 export const metadata: Metadata = {
   title: "Poems",
@@ -13,6 +14,7 @@ export default async function PoemsPage() {
   const feed = await getPoemsFeed();
   return (
     <div className="container container-narrow">
+      <RoomsStrip current="poems" />
       <header className="room-head">
         <div className="room-eyebrow">/ works / poems</div>
         <h1 className="room-title">A library of his lines.</h1>

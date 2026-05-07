@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { getUnsplashFeed, lastSeen } from "@/lib/feeds";
 import { TEMI } from "@/lib/identities";
+import RoomsStrip from "@/components/RoomsStrip";
 
 export const metadata: Metadata = {
   title: "Photos — Unsplash @cotek",
@@ -12,6 +13,7 @@ export default async function PhotosPage() {
   const feed = await getUnsplashFeed();
   return (
     <div className="container">
+      <RoomsStrip current="photos" />
       <header className="room-head">
         <div className="room-eyebrow">/ works / photos</div>
         <h1 className="room-title">Photographs.</h1>

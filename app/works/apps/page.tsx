@@ -1,6 +1,7 @@
 // app/works/apps/page.tsx
 import type { Metadata } from "next";
 import { TEMI } from "@/lib/identities";
+import RoomsStrip from "@/components/RoomsStrip";
 
 export const metadata: Metadata = {
   title: "Apps — Cotek App FZ-LLC",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function AppsPage() {
   return (
     <div className="container container-narrow">
+      <RoomsStrip current="apps" />
       <header className="room-head">
         <div className="room-eyebrow">/ works / apps</div>
         <h1 className="room-title">Tools, written down.</h1>

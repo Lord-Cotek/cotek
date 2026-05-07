@@ -4,6 +4,7 @@
 
 import type { Metadata } from "next";
 import { TEMI } from "@/lib/identities";
+import RoomsStrip from "@/components/RoomsStrip";
 
 export const metadata: Metadata = {
   title: "Field — water, wastewater, reef",
@@ -17,6 +18,7 @@ export default function FieldPage() {
 
   return (
     <div className="container container-narrow">
+      <RoomsStrip current="field" />
       <header className="room-head">
         <div className="room-eyebrow">/ works / field</div>
         <h1 className="room-title">The other half of his life.</h1>

@@ -1,6 +1,7 @@
 // app/works/research/page.tsx
 import type { Metadata } from "next";
 import { TEMI } from "@/lib/identities";
+import RoomsStrip from "@/components/RoomsStrip";
 
 export const metadata: Metadata = {
   title: "Research",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function ResearchPage() {
   return (
     <div className="container container-narrow">
+      <RoomsStrip current="research" />
       <header className="room-head">
         <div className="room-eyebrow">/ works / research</div>
         <h1 className="room-title">Independent research.</h1>

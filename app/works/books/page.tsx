@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { getBooksFeed, lastSeen } from "@/lib/feeds";
 import { TEMI } from "@/lib/identities";
+import RoomsStrip from "@/components/RoomsStrip";
 
 export const metadata: Metadata = {
   title: "Books — Orchids and Tamarind",
@@ -27,6 +28,7 @@ export default async function BooksPage() {
   const feed = await getBooksFeed();
   return (
     <div className="container container-narrow">
+      <RoomsStrip current="books" />
       <header className="room-head">
         <div className="room-eyebrow">/ works / books</div>
         <h1 className="room-title">Pages, with their own weather.</h1>

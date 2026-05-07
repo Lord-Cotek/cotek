@@ -1,6 +1,7 @@
 // app/works/sermons/page.tsx
 import type { Metadata } from "next";
 import { getSermonsFeed, lastSeen } from "@/lib/feeds";
+import RoomsStrip from "@/components/RoomsStrip";
 
 export const metadata: Metadata = {
   title: "Sermons — RAK Church",
@@ -12,6 +13,7 @@ export default async function SermonsPage() {
   const feed = await getSermonsFeed();
   return (
     <div className="container container-narrow">
+      <RoomsStrip current="sermons" />
       <header className="room-head">
         <div className="room-eyebrow">/ works / sermons</div>
         <h1 className="room-title">A long obedience built in stone.</h1>
