@@ -1,0 +1,426 @@
+/*
+  The threshold.
+
+  The choreography lives here rather than in JavaScript. Every element in the
+  ceremony carries an index (`--i`) and enters on a CSS animation whose delay
+  is computed from it, which means the browser's own compositor runs the whole
+  sequence off the main thread — no per-frame React state, no queue of a dozen
+  setTimeouts to clean up, and no chance of the sequence half-playing because
+  a timer fired during a re-render.
+
+  The one thing JavaScript owns is the canvas that draws the web between the
+  names, because that genuinely needs a frame loop. It reads the same constants
+  as the delays below, from lib/threshold-timing.
+
+  Two escapes from the sequence, both landing in the same place:
+  `data-motion="still"` renders the final frame and runs nothing.
+*/
+
+.threshold {
+  position: relative;
+  z-index: var(--z-content);
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 6rem var(--gutter) 4rem;
+  overflow: hidden;
+}
+
+/* ── The web ─────────────────────────────────────────────────────────────
+   The canvas that links the names. Sits behind the type, above the field. */
+
+.threshold-web {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ── The names ─────────────────────────────────────────────────────────── */
+
+.threshold-stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.tname {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  white-space: nowrap;
+  font-size: clamp(0.8rem, 0.7rem + 0.5vw, 1.05rem);
+  font-weight: 400;
+  letter-spacing: var(--tr-tight);
+  color: var(--bone-50);
+  opacity: 0;
+  will-change: opacity, transform, filter;
+  transform: translate(-50%, -50%) translate(var(--nx, 0px), var(--ny, 0px));
+  animation:
+    name-in 760ms var(--ease-out) forwards,
+    name-out 1000ms var(--ease-io) forwards;
+  animation-delay: calc(var(--t-name) + var(--i) * var(--t-name-step)), var(--t-converge);
+}
+
+/* The five that carry a letter of the word are set in the serif and read
+   brighter, so the eye has already grouped them before they move. */
+.tname[data-letter] {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(0.95rem, 0.8rem + 0.7vw, 1.35rem);
+  color: var(--bone-70);
+}
+
+@keyframes name-in {
+  from {
+    opacity: 0;
+    filter: blur(7px);
+    transform: translate(-50%, -50%)
+      translate(calc(var(--nx, 0px) * 1.22), calc(var(--ny, 0px) * 1.22));
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate(-50%, -50%) translate(var(--nx, 0px), var(--ny, 0px));
+  }
+}
+
+/* The names do not fade where they stand — they travel down their own link
+   into the middle. The word is assembled out of them, not printed over them. */
+@keyframes name-out {
+  to {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translate(-50%, -50%)
+      translate(calc(var(--nx, 0px) * 0.05), calc(var(--ny, 0px) * 0.05));
+  }
+}
+
+/* ── The core ──────────────────────────────────────────────────────────── */
+
+.threshold-core {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 62rem;
+}
+
+/* The shield, very large and very faint, behind the word it stands for. */
+.mark-ghost {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -54%;
+  color: var(--bone);
+  opacity: 0;
+  pointer-events: none;
+  animation: ghost-in 2.4s var(--ease-out) forwards;
+  animation-delay: var(--t-ghost);
+}
+
+.mark-ghost svg {
+  height: clamp(15rem, 46vh, 30rem);
+  width: auto;
+}
+
+@keyframes ghost-in {
+  from {
+    opacity: 0;
+    scale: 1.12;
+  }
+  to {
+    opacity: 0.055;
+    scale: 1;
+  }
+}
+
+/* ── The wordmark ──────────────────────────────────────────────────────── */
+
+.wordmark {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  /* Optical, not metric: the tracking below adds a trailing space after the
+     K that would otherwise push the whole word left of centre. */
+  padding-left: 0.12em;
+  font-size: var(--t-5xl);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.12em;
+}
+
+.wordmark .letter {
+  display: inline-block;
+  opacity: 0;
+  will-change: opacity, transform, filter;
+  animation: letter-in 700ms var(--ease-out) forwards;
+  animation-delay: calc(var(--t-letter) + var(--i) * var(--t-letter-step));
+}
+
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(0.16em) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+/* ── The expansion ─────────────────────────────────────────────────────── */
+
+.expansion {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0 clamp(0.4rem, 1.4vw, 1.4rem);
+  width: 100%;
+  max-width: 44rem;
+  margin-top: clamp(1.4rem, 3vh, 2.4rem);
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+}
+
+.expansion .row {
+  opacity: 0;
+  animation: rise 700ms var(--ease-out) forwards;
+  animation-delay: calc(var(--t-rows) + var(--i) * var(--t-row-step));
+}
+
+.expansion dt {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--t-lg);
+  color: var(--accent);
+}
+
+.expansion dd {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bone-30);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.9rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── The closing lines ─────────────────────────────────────────────────── */
+
+.meaning,
+.subline,
+.threshold-actions,
+.threshold-cue {
+  opacity: 0;
+  animation: rise 800ms var(--ease-out) forwards;
+}
+
+.meaning {
+  margin-top: clamp(1.8rem, 4vh, 3rem);
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-size: var(--t-2xl);
+  line-height: 1.2;
+  color: var(--bone);
+  animation-delay: var(--t-meaning);
+}
+
+.subline {
+  margin-top: 0.9rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--bone-30);
+  animation-delay: var(--t-subline);
+}
+
+.threshold-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: clamp(1.8rem, 4vh, 2.8rem);
+  animation-delay: var(--t-actions);
+}
+
+.threshold-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 1.6rem;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.52rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--bone-30);
+  animation-delay: var(--t-actions);
+}
+
+.threshold-cue .stem {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(to bottom, transparent, var(--accent));
+  animation: drop 2.6s var(--ease-io) infinite;
+}
+
+@keyframes drop {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scaleY(0.55);
+    transform-origin: top;
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+}
+
+/* ── Skip ──────────────────────────────────────────────────────────────── */
+/* Offered rather than imposed: it appears once the sequence has visibly
+   started, and it is a real button so it is reachable by tab from the top of
+   the page — which is the only way a keyboard user could otherwise be made to
+   sit through six seconds of animation. */
+
+.threshold-skip {
+  position: absolute;
+  top: 5.6rem;
+  right: var(--gutter);
+  z-index: 3;
+  padding: 0.5rem 0.85rem;
+  background: none;
+  border: 1px solid var(--line-mid);
+  border-radius: var(--radius);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.55rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--bone-30);
+  cursor: pointer;
+  opacity: 0;
+  animation: rise 500ms var(--ease-out) forwards;
+  animation-delay: 900ms;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.threshold-skip:hover {
+  color: var(--bone);
+  border-color: var(--line-strong);
+}
+
+/* ── The still frame ───────────────────────────────────────────────────── */
+/* Reduced motion, a second visit in the same session, or the skip button.
+   All three land here: the finished composition, no sequence. */
+
+.threshold[data-motion="still"] .tname,
+.threshold[data-motion="still"] .threshold-skip {
+  animation: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.threshold[data-motion="still"] .letter,
+.threshold[data-motion="still"] .expansion .row,
+.threshold[data-motion="still"] .meaning,
+.threshold[data-motion="still"] .subline,
+.threshold[data-motion="still"] .threshold-actions,
+.threshold[data-motion="still"] .threshold-cue {
+  animation: none;
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.threshold[data-motion="still"] .mark-ghost {
+  animation: none;
+  opacity: 0.055;
+  scale: 1;
+}
+
+/* ── Below the fold ────────────────────────────────────────────────────── */
+/* The ceremony argues that the names are one person. This is the evidence:
+   the plain list, always in the document whether or not anything animated. */
+
+.beats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
+  gap: 1px;
+  background: var(--line);
+  border-block: 1px solid var(--line);
+}
+
+.beats div {
+  padding: clamp(1.6rem, 4vw, 2.6rem) clamp(1rem, 2vw, 1.6rem);
+  background: var(--ink);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--t-xl);
+  color: var(--bone-70);
+}
+
+.ledger {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.ledger h2 {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--bone-30);
+  padding-bottom: 0.9rem;
+  margin-bottom: 0.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.ledger li {
+  padding-block: 0.55rem;
+  color: var(--bone-70);
+  font-size: var(--t-sm);
+  border-bottom: 1px solid var(--line);
+}
+
+.ledger li:last-child {
+  border-bottom: 0;
+}
+
+@media (max-width: 720px) {
+  .expansion {
+    max-width: 26rem;
+    gap: 0 0.3rem;
+  }
+
+  .expansion dd {
+    font-size: 0.45rem;
+    letter-spacing: 0.04em;
+  }
+
+  .threshold-skip {
+    top: 4.6rem;
+  }
+}

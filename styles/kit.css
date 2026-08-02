@@ -1,0 +1,739 @@
+/*
+  The kit.
+
+  Every room on the site is assembled from the classes below. They are shared
+  on purpose: a chapel that needs a component this file does not have is
+  usually a chapel that wants to be laid out like one that does.
+*/
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Eyebrow / stamp — the small monospace label that opens a block
+   ───────────────────────────────────────────────────────────────────────── */
+
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--bone-30);
+}
+
+.stamp::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* The plain variant — a rule instead of a dot, for labels that sit above a
+   block rather than beside a live thing. */
+.stamp-rule::before {
+  width: 18px;
+  height: 1px;
+  border-radius: 0;
+  background: var(--line-strong);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Room head — the standard opening of every page
+   ───────────────────────────────────────────────────────────────────────── */
+
+.room-head {
+  max-width: 34ch;
+}
+
+.room-head .stamp {
+  margin-bottom: 1.5rem;
+}
+
+.room-title {
+  font-size: var(--t-3xl);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-display);
+  font-weight: 600;
+}
+
+.room-title em {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.08em;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+
+.room-deck {
+  margin-top: 1.6rem;
+  font-size: var(--t-lg);
+  line-height: 1.5;
+  color: var(--bone-70);
+  max-width: 46ch;
+}
+
+/* The deck wants to be wider than the title. Both are capped, so the head
+   sets its own measure and the container does not have to. */
+.room-head {
+  max-width: min(56ch, 100%);
+}
+
+.room-head .room-title {
+  max-width: 20ch;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Prose
+   ───────────────────────────────────────────────────────────────────────── */
+
+.prose {
+  color: var(--bone-70);
+  max-width: var(--measure);
+}
+
+.prose p + p {
+  margin-top: 1.1em;
+}
+
+.prose strong {
+  color: var(--bone);
+  font-weight: 500;
+}
+
+.prose em {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  color: var(--bone);
+  font-size: 1.08em;
+}
+
+.prose a {
+  color: var(--bone);
+  box-shadow: inset 0 -1px 0 var(--line-strong);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.prose a:hover {
+  color: var(--accent);
+  box-shadow: inset 0 -1px 0 var(--accent);
+}
+
+.prose code {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.86em;
+  color: var(--bone);
+  background: var(--ink-card);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0.1em 0.35em;
+}
+
+.prose h2 {
+  margin-top: 2.4em;
+  font-size: var(--t-xl);
+  color: var(--bone);
+}
+
+.prose ul {
+  margin-top: 1.1em;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.prose ul li {
+  position: relative;
+  padding-left: 1.4rem;
+}
+
+.prose ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 8px;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Pull quote
+   ───────────────────────────────────────────────────────────────────────── */
+
+.pull {
+  margin-block: 3.5rem;
+  padding-left: clamp(1.2rem, 3vw, 2.2rem);
+  border-left: 1px solid var(--accent);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--t-xl);
+  line-height: 1.34;
+  color: var(--bone);
+  max-width: 34ch;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Buttons
+   ───────────────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.78rem 1.35rem;
+  border-radius: var(--radius);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-solid {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.btn-solid:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--accent) 84%, white);
+}
+
+.btn-solid svg {
+  transition: transform var(--dur-mid) var(--ease-out);
+}
+
+.btn-solid:hover:not(:disabled) svg {
+  transform: translateX(3px);
+}
+
+.btn-ghost {
+  border-color: var(--line-mid);
+  color: var(--bone-70);
+  background: none;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  color: var(--bone);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Cards
+   ───────────────────────────────────────────────────────────────────────── */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* A 1px grid gap over a hairline background gives every card a shared border
+   with its neighbours — one rule instead of two adjacent ones, which is the
+   difference between a table and a stack of boxes. */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: clamp(1.3rem, 2.4vw, 1.9rem);
+  background: var(--ink-raise);
+  position: relative;
+  transition: background var(--dur-mid) var(--ease-out);
+}
+
+a.card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform var(--dur-mid) var(--ease-out);
+}
+
+a.card:hover,
+a.card:focus-visible {
+  background: var(--ink-card);
+}
+
+a.card:hover::before,
+a.card:focus-visible::before {
+  transform: scaleY(1);
+}
+
+.card-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.55rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--bone-30);
+}
+
+.card-title {
+  font-size: var(--t-lg);
+  font-weight: 500;
+  letter-spacing: var(--tr-tight);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+a.card:hover .card-title,
+a.card:focus-visible .card-title {
+  color: var(--accent);
+}
+
+.card-meta {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--bone-30);
+}
+
+.card-body {
+  color: var(--bone-70);
+  font-size: var(--t-sm);
+  line-height: 1.6;
+}
+
+.card-tag {
+  margin-top: auto;
+  padding-top: 0.6rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Index rows — the dense, monospaced list used wherever things are numbered
+   ───────────────────────────────────────────────────────────────────────── */
+
+.index li {
+  border-bottom: 1px solid var(--line);
+}
+
+.index li:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.index a,
+.index .row {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0 1rem;
+  padding: 0.9rem 0.6rem 0.9rem 0;
+  position: relative;
+  transition: padding-left var(--dur-mid) var(--ease-out);
+}
+
+.index a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--glass, var(--accent));
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform var(--dur-mid) var(--ease-out);
+}
+
+.index a:hover,
+.index a:focus-visible {
+  padding-left: 0.85rem;
+}
+
+.index a:hover::before,
+.index a:focus-visible::before {
+  transform: scaleY(1);
+}
+
+.index .n {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  color: var(--bone-30);
+}
+
+.index .nm {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: var(--tr-tight);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.index a:hover .nm,
+.index a:focus-visible .nm {
+  color: var(--glass, var(--accent));
+}
+
+.index .meta {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bone-30);
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Folio — a definition row set like a printed glossary
+   ───────────────────────────────────────────────────────────────────────── */
+
+.folio {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
+  gap: 0.4rem 2.5rem;
+  padding-block: 1.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.folio:first-of-type {
+  border-top: 1px solid var(--line);
+}
+
+.folio dt {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--t-lg);
+  color: var(--bone);
+}
+
+.folio dd {
+  margin: 0;
+  color: var(--bone-70);
+}
+
+.folio .appears {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--bone-30);
+}
+
+@media (max-width: 640px) {
+  .folio {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Tally — the numeric strip
+   ───────────────────────────────────────────────────────────────────────── */
+
+.tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.4rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--line);
+}
+
+.tally dt {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.55rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--bone-30);
+}
+
+.tally dd {
+  margin: 0.3rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Chapel strip — sibling navigation inside the cathedral
+   ───────────────────────────────────────────────────────────────────────── */
+
+.chapel-strip {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  padding-bottom: 1.6rem;
+  margin-bottom: 2.6rem;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chapel-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.chapel-strip .back {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bone-50);
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.chapel-strip .back:hover {
+  color: var(--accent);
+}
+
+.chapel-strip ul {
+  display: flex;
+  gap: 1.2rem;
+  margin: 0;
+}
+
+.chapel-strip li a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--t-sm);
+  color: var(--bone-50);
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.chapel-strip li a::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--glass, var(--bone-15));
+  opacity: 0.4;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.chapel-strip li a:hover,
+.chapel-strip li a[aria-current="page"] {
+  color: var(--bone);
+}
+
+.chapel-strip li a:hover::before,
+.chapel-strip li a[aria-current="page"]::before {
+  opacity: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Forms
+   ───────────────────────────────────────────────────────────────────────── */
+
+.field-group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field-group label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--bone-50);
+}
+
+.field-group input,
+.field-group textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: var(--ink-raise);
+  border: 1px solid var(--line-mid);
+  border-radius: var(--radius);
+  color: var(--bone);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.field-group textarea {
+  min-height: 11rem;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.field-group input::placeholder,
+.field-group textarea::placeholder {
+  color: var(--bone-30);
+}
+
+.field-group input:focus,
+.field-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.field-group input:focus-visible,
+.field-group textarea:focus-visible {
+  outline: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Panels — the letter reply and the daily signal
+   ───────────────────────────────────────────────────────────────────────── */
+
+.panel {
+  padding: clamp(1.6rem, 4vw, 2.8rem);
+  background: var(--ink-raise);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* A single lit edge along the top, the width of the accent. Cheap, and it
+   makes a panel read as illuminated rather than merely boxed. */
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(to right, var(--accent), transparent 62%);
+}
+
+.panel-body {
+  margin-top: 1.4rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--t-xl);
+  line-height: 1.44;
+  color: var(--bone);
+  white-space: pre-wrap;
+}
+
+.panel-note {
+  margin-top: 1.6rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--bone-30);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Photo grid
+   ───────────────────────────────────────────────────────────────────────── */
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.photo-grid a {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--ink-raise);
+  overflow: hidden;
+}
+
+.photo-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    transform var(--dur-slow) var(--ease-out),
+    opacity var(--dur-mid) var(--ease-out);
+  opacity: 0.86;
+}
+
+.photo-grid a:hover img,
+.photo-grid a:focus-visible img {
+  transform: scale(1.04);
+  opacity: 1;
+}
+
+.photo-empty {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 1rem;
+  text-align: center;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--bone-30);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Reef log — dated entries with a quoted line
+   ───────────────────────────────────────────────────────────────────────── */
+
+.reef li {
+  padding-block: 1.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.reef li:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.reef .when {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--bone-30);
+}
+
+.reef .line {
+  margin-top: 0.6rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--t-lg);
+  color: var(--bone-70);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Feed stamp — "live / cached, last seen"
+   ───────────────────────────────────────────────────────────────────────── */
+
+.feed-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.6rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bone-30);
+}
+
+.feed-stamp .led {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--bone-30);
+  flex-shrink: 0;
+}
+
+.feed-stamp[data-live="true"] .led {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}

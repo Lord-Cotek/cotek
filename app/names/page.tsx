@@ -1,11 +1,12 @@
-// app/names/page.tsx
 import type { Metadata } from "next";
+import Mark from "@/components/Mark";
 import { TEMI } from "@/lib/identities";
 
 export const metadata: Metadata = {
-  title: "Names",
+  title: "The Rose Window — names",
   description:
     "Cotek Temi · Temi Cotek · Temitayo Cotek · Cotek Temitayo · Temitayo Ezekiel Olayiwola · Omogbolahan · Kadiri · Cotek. Every form of the name, every profile, set as a colophon.",
+  alternates: { canonical: "/names" },
 };
 
 const HANDLE_LABELS: Record<string, string> = {
@@ -26,94 +27,187 @@ const HANDLE_LABELS: Record<string, string> = {
 
 export default function NamesPage() {
   return (
-    <div className="container container-narrow">
-      <header className="room-head">
-        <div className="room-eyebrow">/ names</div>
-        <h1 className="room-title">A colophon.</h1>
-        <p className="room-deck">
-          A printed book often closes with a colophon — a small,
-          carefully-set record of who made it and how. This page is that.
-          Every name. Every profile. One person.
-        </p>
-      </header>
+    <div className="room">
+      <div className="shell-narrow">
+        <header className="room-head">
+          <p className="stamp">The Rose Window · Names</p>
+          <h1 className="room-title">
+            One person, <em>refracted</em>.
+          </h1>
+          <p className="room-deck">
+            A printed book often closes with a colophon — a small, carefully set record
+            of who made it and how. A rose window does the same thing with light. This
+            page is both.
+          </p>
+        </header>
 
-      <section className="colophon">
-        <div className="word">{TEMI.acronym.word}</div>
-        <div className="meaning">means {TEMI.acronym.meaning.toLowerCase()}.</div>
-        <div style={{ marginTop: 18, display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, maxWidth: 600, margin: "18px auto 0" }}>
-          {TEMI.acronym.expansion.map((l) => (
-            <div key={l.letter}>
-              <div style={{ fontFamily: "var(--font-serif)", fontSize: 22 }}>{l.letter}</div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--ink-mute)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>
-                {l.name}
+        <section
+          className="section reveal"
+          style={{ textAlign: "center", position: "relative" }}
+        >
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "grid",
+              placeItems: "center",
+              color: "var(--bone)",
+              opacity: 0.045,
+              pointerEvents: "none",
+            }}
+          >
+            <Mark size={300} />
+          </div>
+
+          <p
+            style={{
+              fontSize: "var(--t-4xl)",
+              fontWeight: 600,
+              letterSpacing: "0.14em",
+              lineHeight: 1,
+              paddingLeft: "0.14em",
+            }}
+          >
+            {TEMI.acronym.word}
+          </p>
+          <p
+            className="serif"
+            style={{ fontStyle: "italic", fontSize: "var(--t-xl)", marginTop: "0.8rem" }}
+          >
+            means {TEMI.acronym.meaning.toLowerCase()}.
+          </p>
+
+          <dl
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+              gap: "0 clamp(0.3rem, 1.5vw, 1.2rem)",
+              maxWidth: "38rem",
+              margin: "2.4rem auto 0",
+              paddingTop: "1.4rem",
+              borderTop: "1px solid var(--line)",
+            }}
+          >
+            {TEMI.acronym.expansion.map((l) => (
+              <div key={l.letter}>
+                <dt className="serif" style={{ fontSize: "var(--t-xl)", color: "var(--accent)" }}>
+                  {l.letter}
+                </dt>
+                <dd
+                  className="mono"
+                  style={{
+                    margin: "0.4rem 0 0",
+                    fontSize: "0.5rem",
+                    color: "var(--bone-30)",
+                    overflowWrap: "anywhere",
+                  }}
+                >
+                  {l.name}
+                </dd>
               </div>
+            ))}
+          </dl>
+        </section>
+
+        <section className="section reveal" style={{ paddingTop: 0 }}>
+          <dl>
+            <div className="folio">
+              <dt>Names he answers to</dt>
+              <dd>
+                {TEMI.names.join(" · ")}
+                <p className="appears">Full given name: {TEMI.fullName}</p>
+              </dd>
             </div>
-          ))}
-        </div>
-      </section>
 
-      <div className="names-grid">
-        <h3>Names he answers to</h3>
-        <ul>
-          {TEMI.names.map((n) => (
-            <li key={n}>{n}</li>
-          ))}
-          <li style={{ color: "var(--ink-mute)", fontStyle: "italic", marginTop: 8 }}>
-            Full given name: {TEMI.fullName}.
-          </li>
-        </ul>
+            <div className="folio">
+              <dt>Lives</dt>
+              <dd>{TEMI.roles.join(" · ")}</dd>
+            </div>
 
-        <h3>Roles</h3>
-        <ul>
-          {TEMI.roles.map((r) => (
-            <li key={r}>{r}</li>
-          ))}
-        </ul>
+            <div className="folio">
+              <dt>Career</dt>
+              <dd>
+                <ul style={{ display: "grid", gap: "0.9rem" }}>
+                  {TEMI.career.map((c) => (
+                    <li key={c.org}>
+                      <strong style={{ color: "var(--bone)" }}>{c.org}</strong> — {c.role}{" "}
+                      <span className="dim">({c.tenure})</span>
+                      <p className="appears">{c.what}</p>
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
 
-        <h3>Career</h3>
-        <ul>
-          {TEMI.career.map((c) => (
-            <li key={c.org}>
-              <strong>{c.org}</strong> — {c.role}{" "}
-              <span style={{ color: "var(--ink-mute)" }}>({c.tenure})</span>
-              <div style={{ color: "var(--ink-mute)", fontSize: 14, marginTop: 2 }}>{c.what}</div>
-            </li>
-          ))}
-        </ul>
+            <div className="folio">
+              <dt>Memberships</dt>
+              <dd>
+                {TEMI.memberships.map((m) => (
+                  <a key={m.name} href={m.url} target="_blank" rel="noreferrer">
+                    {m.name}
+                  </a>
+                ))}
+              </dd>
+            </div>
 
-        <h3>Memberships</h3>
-        <ul>
-          {TEMI.memberships.map((m) => (
-            <li key={m.name}>
-              <a href={m.url} target="_blank" rel="noreferrer">{m.name}</a>
-            </li>
-          ))}
-        </ul>
+            <div className="folio">
+              <dt>Certifications</dt>
+              <dd>
+                {TEMI.certifications.map((c) => (
+                  <div key={c.name}>
+                    {c.name} — {c.body}
+                    <p className="appears">
+                      No. {c.diverNumber} · issued {c.issuedAt} · {c.school}
+                    </p>
+                  </div>
+                ))}
+              </dd>
+            </div>
 
-        <h3>Affiliations</h3>
-        <ul>
-          {TEMI.affiliations.map((a) => (
-            <li key={a.name}>
-              {"url" in a && a.url ? (
-                <a href={a.url} target="_blank" rel="noreferrer">{a.name}</a>
-              ) : a.name}
-              {"role" in a && a.role ? (
-                <span style={{ color: "var(--ink-mute)" }}> · {a.role}</span>
-              ) : null}
-            </li>
-          ))}
-        </ul>
+            <div className="folio">
+              <dt>Affiliations</dt>
+              <dd>
+                <ul style={{ display: "grid", gap: "0.4rem" }}>
+                  {TEMI.affiliations.map((a) => (
+                    <li key={a.name}>
+                      {"url" in a && a.url ? (
+                        <a href={a.url} target="_blank" rel="noreferrer">
+                          {a.name}
+                        </a>
+                      ) : (
+                        a.name
+                      )}
+                      {"role" in a && a.role ? <span className="dim"> · {a.role}</span> : null}
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
 
-        <h3>Profiles</h3>
-        <ul>
-          {Object.entries(TEMI.handles).map(([k, url]) => (
-            <li key={k}>
-              <a href={url} target="_blank" rel="me noreferrer">
-                {HANDLE_LABELS[k] ?? k}
-              </a>
-            </li>
-          ))}
-        </ul>
+            <div className="folio">
+              <dt>Profiles</dt>
+              <dd>
+                <ul style={{ display: "grid", gap: "0.4rem" }}>
+                  {Object.entries(TEMI.handles).map(([k, url]) => (
+                    <li key={k}>
+                      {/* rel="me" is what lets these profiles and this page
+                          verify each other as the same person. */}
+                      <a href={url} target="_blank" rel="me noreferrer">
+                        {HANDLE_LABELS[k] ?? k}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+
+            <div className="folio">
+              <dt>Where he is</dt>
+              <dd>{TEMI.location}</dd>
+            </div>
+          </dl>
+        </section>
       </div>
     </div>
   );

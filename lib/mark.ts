@@ -1,0 +1,25 @@
+/**
+ * The Cotek mark, as geometry.
+ *
+ * Two filled subpaths: the open shield band, and the C inside it. Both are
+ * fills, not strokes — the tapered terminals on the lower-right sweep only
+ * exist as outlines, and a stroked version loses them.
+ *
+ * Kept as data rather than as an .svg file so that every surface that draws
+ * the mark — the masthead, the favicon, the social card, the ghost behind the
+ * wordmark on the threshold — draws the identical shape from one source and
+ * they can never drift apart.
+ */
+
+export const MARK_VIEWBOX = "0 0 85.89 100";
+
+/** Width ÷ height, for sizing without hardcoding the ratio at each call site. */
+export const MARK_RATIO = 85.89 / 100;
+
+export const MARK_SHIELD =
+  "M41.89 0L54.11 0.42L65.89 1.89L74.11 3.79L85.68 7.79L85.89 20.42L85.26 20.84L75.37 17.05L65.68 14.53L57.05 13.05L47.79 12.21L36.84 12.21L28.84 12.84L18.32 14.53L12.84 16.21L12.21 16.84L12.21 57.26L13.05 61.89L14.95 66.11L17.05 69.26L20 72.42L38.32 84.84L43.16 87.37L44.42 87.16L45.89 86.32L60.42 77.47L76 71.79L85.26 66.74L85.47 67.16L83.79 70.53L80 75.79L75.16 80.42L63.58 88.63L51.79 95.79L43.79 100L43.16 100L30.32 92.84L19.37 85.68L9.68 77.89L6.11 74.11L4 70.95L1.47 64.84L0.42 59.79L0 55.58L0.21 8.42L1.05 7.58L5.68 5.68L12.84 3.37L20.21 1.68L30.74 0.42L41.68 0.21Z";
+
+export const MARK_C =
+  "M41.26 23.16L50.32 23.16L57.89 23.79L66.11 25.26L71.79 26.95L72.42 27.58L72.42 35.16L71.16 35.37L66.95 34.53L58.11 33.68L47.16 33.68L42.11 34.11L40 34.95L37.47 37.47L36.63 42.11L36.63 49.26L37.68 53.89L38.95 55.16L40 55.58L48.84 56.84L60.21 56.63L72.21 55.37L72.63 55.79L72.63 62.95L71.58 63.79L64.84 65.26L51.16 67.16L40.84 67.16L37.26 66.74L30.74 65.26L27.79 63.58L26.74 62.11L25.26 58.53L24 51.16L24 38.32L25.26 29.89L26.95 26.53L30.11 24.42L35.37 23.58L41.05 23.37Z";
+
+export const MARK_PATHS = [MARK_SHIELD, MARK_C];

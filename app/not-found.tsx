@@ -1,47 +1,44 @@
-// app/not-found.tsx
-// 404 as a poem. Five quatrains; one is shown at random. At least one
-// references water, per the brief.
-
 import Link from "next/link";
-
-const POEMS = [
-  `The well is not where the bucket left it.
-The path remembers, but does not say.
-You walked past a door that was a window;
-the window was open. Try again.`,
-
-  `Ask the water where the page went.
-It will not answer. It rarely does.
-Return to the room with the names in it
-and we will find what you came for.`,
-
-  `Some signals arrive late, and full of salt.
-Some pages arrive not at all.
-Stand still a moment. The cathedral is large.
-We will both hear the bell.`,
-
-  `A reef is a city of small obediences.
-This page was not one of them.
-Forgiveness, like current, is plural.
-Step back into it and try once more.`,
-
-  `What the desert keeps, it keeps in writing.
-What the page did not, it could not.
-Walk back to the threshold. Begin again,
-slowly, by hand.`,
-];
-
-function pick(): string {
-  // Stable per-request randomness; on the client this is fine.
-  return POEMS[Math.floor(Math.random() * POEMS.length)];
-}
+import { STATIONS } from "@/lib/cathedral";
 
 export default function NotFound() {
-  const poem = pick();
   return (
-    <div className="notfound">
-      <div className="poem">{poem}</div>
-      <Link href="/">Return to the threshold</Link>
+    <div className="room">
+      <div className="shell-narrow">
+        <header className="room-head">
+          <p className="stamp">404 · no such room</p>
+          <h1 className="room-title">
+            There is no door <em>here</em>.
+          </h1>
+          <p className="room-deck">
+            The building has twelve stations and this is not one of them. Every one of
+            them is listed below, which is more use than an apology.
+          </p>
+        </header>
+
+        <section className="section">
+          <ul className="index">
+            {STATIONS.map((s, i) => (
+              <li key={s.slug} style={{ "--glass": s.glass } as React.CSSProperties}>
+                <Link href={s.href} data-station={s.slug}>
+                  <span className="n">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="nm">{s.title}</span>
+                  <span className="meta">{s.room}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="threshold-actions" style={{ justifyContent: "flex-start" }}>
+            <Link className="btn btn-solid" href="/cathedral">
+              See the plan
+            </Link>
+            <Link className="btn btn-ghost" href="/">
+              Back to the threshold
+            </Link>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

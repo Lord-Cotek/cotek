@@ -25,8 +25,6 @@ export async function POST(req: Request) {
   const live = await complete({
     system: VERSE_SYSTEM_PROMPT,
     user: prompt,
-    maxTokens: 320,
-    temperature: 0.92,
   }).catch(() => null);
 
   if (live) {

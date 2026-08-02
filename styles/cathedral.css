@@ -1,0 +1,338 @@
+/*
+  The floor plan.
+
+  The building is drawn as one SVG — walls, arcade, apse — and every station
+  on it is a real HTML anchor positioned over the drawing in percentages of
+  the same coordinate space. Two reasons that split is worth the small extra
+  bookkeeping:
+
+    - The links are ordinary anchors. They route client-side, they focus and
+      tab like anything else on the page, and their labels are set in the
+      site's own type at the site's own sizes rather than scaling with the
+      drawing until they are four pixels tall.
+    - The drawing itself is inert and can be hidden from assistive technology
+      wholesale, because everything it depicts is also in the index below it.
+
+  The container's aspect ratio is pinned to the viewBox's, which is what keeps
+  the two layers registered with each other at every width.
+*/
+
+.plan-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  /* Bleed to the viewport edge on narrow screens so the pannable area is
+     obviously pannable rather than looking like a clipped box. */
+  margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+}
+
+.plan {
+  position: relative;
+  width: 100%;
+  min-width: 780px;
+  aspect-ratio: 1000 / 460;
+}
+
+.plan svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ── The fabric ────────────────────────────────────────────────────────── */
+
+/* Given as explicit low-alpha bone rather than a mix of the ink tokens: the
+   ink steps are all within a few per cent of black, so a mix of them over a
+   black page is invisible — the masses have to be lit, not darkened. */
+.plan-fabric {
+  fill: rgb(237 240 243 / 0.022);
+  stroke: var(--line-mid);
+  stroke-width: 1;
+}
+
+/* The vessel reads a half-step brighter than the aisles around it, which is
+   the only way a plan drawn in one colour shows you where the middle is. */
+.plan-vessel {
+  fill: rgb(237 240 243 / 0.05);
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.plan-column {
+  fill: var(--line-strong);
+}
+
+/* The lit line. Stewardship preached at one end, practised at the other —
+   the only line on the plan that is not a wall. */
+.plan-ley {
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-dasharray: 3 7;
+  opacity: 0.5;
+  animation: ley 14s linear infinite;
+}
+
+@keyframes ley {
+  to {
+    stroke-dashoffset: -200;
+  }
+}
+
+.plan-axis {
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 2 6;
+}
+
+.plan-compass {
+  fill: var(--bone-30);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ── The stations ──────────────────────────────────────────────────────── */
+
+.plan-station {
+  position: absolute;
+  left: calc(var(--px) * 1%);
+  top: calc(var(--py) * 1%);
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  width: 0;
+  height: 0;
+}
+
+.plan-dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  transition: background var(--dur-mid) var(--ease-out);
+}
+
+.plan-dot::after {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--glass);
+  transition:
+    transform var(--dur-mid) var(--ease-out),
+    box-shadow var(--dur-mid) var(--ease-out);
+}
+
+/* Stations that are rooms of work read as filled; the rest read as outlines.
+   It is the plan's way of saying which doors lead to the work. */
+.plan-station[data-kind="station"] .plan-dot::after {
+  background: none;
+  border: 1px solid var(--glass);
+  opacity: 0.75;
+}
+
+.plan-station:hover .plan-dot::after,
+.plan-station:focus-visible .plan-dot::after,
+.plan-station[data-active="true"] .plan-dot::after {
+  transform: scale(1.5);
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--glass) 18%, transparent);
+}
+
+.plan-station:focus-visible {
+  outline: none;
+}
+
+.plan-station:focus-visible .plan-dot {
+  outline: 2px solid var(--glass);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* ── The labels ────────────────────────────────────────────────────────── */
+
+.plan-label {
+  position: absolute;
+  display: grid;
+  gap: 0.1rem;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.plan-label .ttl {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: var(--tr-tight);
+  color: var(--bone-70);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.plan-label .sub {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bone-30);
+}
+
+.plan-station:hover .ttl,
+.plan-station:focus-visible .ttl,
+.plan-station[data-active="true"] .ttl {
+  color: var(--glass);
+}
+
+/* Four placements, so a label never crosses the wall of the room it names. */
+.plan-station[data-label="n"] .plan-label {
+  bottom: 22px;
+  left: 50%;
+  translate: -50% 0;
+  text-align: center;
+  justify-items: center;
+}
+
+.plan-station[data-label="s"] .plan-label {
+  top: 22px;
+  left: 50%;
+  translate: -50% 0;
+  text-align: center;
+  justify-items: center;
+}
+
+.plan-station[data-label="e"] .plan-label {
+  left: 24px;
+  top: 50%;
+  translate: 0 -50%;
+  text-align: left;
+  justify-items: start;
+}
+
+.plan-station[data-label="w"] .plan-label {
+  right: 24px;
+  top: 50%;
+  translate: 0 -50%;
+  text-align: right;
+  justify-items: end;
+}
+
+/* ── The readout ───────────────────────────────────────────────────────── */
+/* One line under the plan that names whatever the pointer is on. It replaces
+   a tooltip: a tooltip near the apse would fall off the right edge, and a
+   tooltip anywhere covers the drawing it is explaining. */
+
+.plan-readout {
+  display: grid;
+  gap: 0.35rem;
+  min-height: 4.4rem;
+  margin-top: 1.6rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--line);
+}
+
+.plan-readout .ttl {
+  font-size: var(--t-lg);
+  font-weight: 500;
+  letter-spacing: var(--tr-tight);
+  color: var(--glass, var(--bone));
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.plan-readout .deck {
+  color: var(--bone-50);
+  font-size: var(--t-sm);
+  max-width: 62ch;
+}
+
+.plan-hint {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bone-30);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   The chapel index — the same information, with nothing to hover
+   ───────────────────────────────────────────────────────────────────────── */
+
+.chapel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.chapel-card {
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+  padding: clamp(1.4rem, 2.6vw, 2rem);
+  background: var(--ink-raise);
+  position: relative;
+  transition: background var(--dur-mid) var(--ease-out);
+}
+
+.chapel-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--glass);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform var(--dur-mid) var(--ease-out);
+}
+
+.chapel-card:hover,
+.chapel-card:focus-visible {
+  background: var(--ink-card);
+}
+
+.chapel-card:hover::before,
+.chapel-card:focus-visible::before {
+  transform: scaleY(1);
+}
+
+.chapel-card .arch {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.chapel-card .ttl {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--t-xl);
+  color: var(--bone);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.chapel-card:hover .ttl,
+.chapel-card:focus-visible .ttl {
+  color: var(--glass);
+}
+
+.chapel-card .room {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.55rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--bone-30);
+  white-space: nowrap;
+}
+
+.chapel-card .deck {
+  color: var(--bone-70);
+  font-size: var(--t-sm);
+  line-height: 1.6;
+}

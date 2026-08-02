@@ -1,0 +1,113 @@
+/*
+  Design tokens.
+
+  cotek.me is one person told in many rooms, so the shell is monochrome and
+  the rooms supply the colour. Every chapel owns a piece of stained glass —
+  a single hue that takes over `--accent` for the whole document while you are
+  inside it, tints the background field, and lights that chapel on the plan.
+  Outside a chapel the page falls back to `--cotek`, the mark's own colour.
+
+  That is the entire colour system. It is why twelve rooms with twelve
+  different temperatures can share one masthead without becoming a paint chart.
+*/
+
+:root {
+  /* ── Surface ─────────────────────────────────────────────────────────── */
+  /* Four steps, not eight. Anything that needs a fifth is asking for a
+     hairline instead. */
+  --ink: #08090b;
+  --ink-raise: #0c0e12;
+  --ink-card: #101318;
+  --ink-deep: #050608;
+
+  /* ── Text ────────────────────────────────────────────────────────────── */
+  --bone: #edf0f3;
+  --bone-70: rgb(237 240 243 / 0.68);
+  --bone-50: rgb(237 240 243 / 0.46);
+  --bone-30: rgb(237 240 243 / 0.3);
+  --bone-15: rgb(237 240 243 / 0.15);
+
+  /* ── Hairlines ───────────────────────────────────────────────────────── */
+  --line: rgb(237 240 243 / 0.08);
+  --line-mid: rgb(237 240 243 / 0.14);
+  --line-strong: rgb(237 240 243 / 0.24);
+
+  /* ── Accent ──────────────────────────────────────────────────────────── */
+  /* `--accent` is reassigned per chapel and per section; `--cotek` always
+     refers back to the mark itself, so a room can always find its way home. */
+  --cotek: #2fdcb4;
+  --accent: var(--cotek);
+  --accent-ink: #04120e;
+
+  /* ── Stained glass ───────────────────────────────────────────────────── */
+  /* One hue per chapel. Chosen to hold ≥4.5:1 against --ink as text and to
+     stay distinguishable from each other at 6px on the floor plan — which is
+     the smaller of the two constraints and the one that set the spacing. */
+  --glass-font: #3ba0e8; /* water */
+  --glass-pulpit: #e0a93b; /* gold */
+  --glass-lady: #9d80e6; /* violet */
+  --glass-library: #dc7444; /* rust */
+  --glass-clerestory: #4fd1d9; /* daylight */
+  --glass-scriptorium: #63c283; /* verdigris */
+  --glass-workshop: #2fdcb4; /* the studio's own */
+
+  /* ── Type ────────────────────────────────────────────────────────────── */
+  /* --font-sans / --font-display / --font-mono come from fonts.css. */
+
+  /* A fluid scale on a ~1.24 ratio, clamped so it never gets silly at 4K. */
+  --t-xs: 0.6875rem;
+  --t-sm: 0.8125rem;
+  --t-base: clamp(0.9375rem, 0.9rem + 0.18vw, 1.0625rem);
+  --t-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --t-xl: clamp(1.35rem, 1.15rem + 0.9vw, 1.9rem);
+  --t-2xl: clamp(1.8rem, 1.4rem + 1.9vw, 3rem);
+  --t-3xl: clamp(2.4rem, 1.6rem + 3.6vw, 4.6rem);
+  --t-4xl: clamp(3rem, 1.5rem + 6.4vw, 8rem);
+  /* The wordmark only. Nothing else on the site is allowed to be this big. */
+  --t-5xl: clamp(3.6rem, 1.2rem + 11vw, 11rem);
+
+  --lh-tight: 0.94;
+  --lh-snug: 1.12;
+  --lh-body: 1.62;
+
+  /* Optical tracking: large type needs negative, small caps need positive. */
+  --tr-display: -0.035em;
+  --tr-tight: -0.02em;
+  --tr-label: 0.16em;
+
+  /* ── Space ───────────────────────────────────────────────────────────── */
+  --gutter: clamp(1.25rem, 4vw, 4.5rem);
+  --measure: 62ch;
+  --shell: 1240px;
+  /* The reading column. Long-form rooms — about, lexicon, letters — sit here
+     rather than at --shell, because 62ch of body copy in a 1240px box is a
+     column with two empty aisles beside it. */
+  --shell-narrow: 780px;
+  --section-y: clamp(5rem, 12vh, 10rem);
+
+  /* ── Motion ──────────────────────────────────────────────────────────── */
+  /* One easing curve for entrances, one for interface response. Using two
+     curves consistently reads as intent; using six reads as noise. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur-mid: 380ms;
+  --dur-slow: 900ms;
+
+  /* ── Depth ───────────────────────────────────────────────────────────── */
+  --radius: 4px;
+  --radius-lg: 10px;
+  --z-field: 0;
+  --z-content: 2;
+  --z-nav: 60;
+  --z-over: 90;
+
+  color-scheme: dark;
+}
+
+/*
+  Light mode is not offered, and this is a decision rather than an omission:
+  the background field is an additive light simulation — it paints with light
+  on darkness — and there is no honest light-mode equivalent of it. Saying so
+  here is cheaper than someone re-deriving the reasoning in six months.
+*/

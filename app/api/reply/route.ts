@@ -63,8 +63,6 @@ export async function POST(req: Request) {
   const reply = await complete({
     system: LETTER_SYSTEM_PROMPT,
     user: `From: ${name || "(unsigned)"}\n\n${note}`,
-    maxTokens: 480,
-    temperature: 0.78,
   }).catch(() => null);
 
   return NextResponse.json({
