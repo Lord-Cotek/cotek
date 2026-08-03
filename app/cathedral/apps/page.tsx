@@ -6,7 +6,7 @@ import { Spell } from "@/lib/numbers";
 export const metadata: Metadata = {
   title: "The Workshop — Cotek App FZ-LLC",
   description:
-    "Software from Cotek App FZ-LLC, registered at RAKEZ in Ras Al Khaimah: PExP, ProMan, Sci-Cotek, BMS, Poems and exp.",
+    "Software from Cotek App FZ-LLC, registered at RAKEZ in Ras Al Khaimah: PExP, ProMan, ExTraP, Oyun, Ìdílé, Bene, StEP, Oluko, Supremo and Poetry.",
   alternates: { canonical: "/cathedral/apps" },
 };
 
@@ -30,7 +30,10 @@ export default function AppsChapel() {
           <div className="cards">
             {apps.map((a) => (
               <a className="card" key={a.name} href={a.url} target="_blank" rel="noreferrer">
-                <span className="card-eyebrow">App</span>
+                {/* The expansion carries the eyebrow rather than a generic
+                    "App" label: half of these are Yoruba words, and a name
+                    like Ìdílé or Oluko means nothing without it. */}
+                <span className="card-eyebrow">{a.expansion}</span>
                 <h2 className="card-title">{a.name}</h2>
                 <p className="card-meta">{a.url.replace("https://", "")}</p>
                 <p className="card-body">{a.what}</p>

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 const ENTRIES: Array<{ term: string; def: string; appears: string }> = [
   { term: "Stewardship", def: "What you do with what is not yours.", appears: "his job description; also his sermon" },
   { term: "Accountability", def: "The courage to be checked.", appears: "every product he ships" },
-  { term: "Ledger", def: "Every honest record is a moral object.", appears: "exp, PExP, the household" },
+  { term: "Ledger", def: "Every honest record is a moral object.", appears: "PExP, Bene, the household" },
   { term: "Signal", def: "The line of language that survives the noise.", appears: "the bell, rung daily" },
   { term: "Threshold", def: "The place between rooms; where most life happens.", appears: "the door of this site" },
   { term: "Harvest", def: "You reap what you wrote down.", appears: "stewardship, examined" },

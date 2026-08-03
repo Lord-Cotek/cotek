@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function PoemsChapel() {
   const feed = await getPoemsFeed();
-  const app = TEMI.works.apps.find((a) => a.name === "Poems");
+  const app = TEMI.works.apps.find((a) => a.url.startsWith("https://poems."));
 
   return (
     <div className="room">

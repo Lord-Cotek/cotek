@@ -52,8 +52,9 @@ export default function AboutPage() {
           <p>
             He is also the founder of <strong>Cotek App FZ-LLC</strong>, registered at
             RAKEZ in Ras Al Khaimah — a small software studio that builds tools around
-            stewardship and accountability: PExP, ProMan, Sci-Cotek, BMS, exp and
-            Poems. Each one is a ledger of a kind.
+            stewardship and accountability — a household ledger, a project
+            workspace, a travel journal, a deacon&rsquo;s desk, a poetry garden.
+            Each one is a ledger of a kind.
           </p>
           <p>
             He is a published author of three books — the <em>Life vs Love</em> trilogy

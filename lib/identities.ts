@@ -101,36 +101,75 @@ export const TEMI = {
     { name: "IISER (India)", role: "Researcher (former)" },
   ],
   works: {
+    /*
+      The studio's portfolio, mirrored from cotek.live — which is the source
+      of truth for what Cotek App FZ-LLC actually ships. Order, names and
+      copy are the products' own, taken from there rather than rewritten
+      here, so the two sites cannot end up describing different companies.
+
+      Sci-Cotek, BMS and exp used to be listed and are not on cotek.live any
+      more; they have been removed rather than left to rot as dead links.
+    */
     apps: [
       {
         name: "PExP",
+        expansion: "Personal Expense Platform",
         url: "https://pexp.cotek.app",
-        what: "Personal Expense Platform — iOS, Android.",
+        what: "A private ledger for individuals, couples and families, where your spending becomes a dataset you can actually question.",
       },
       {
         name: "ProMan",
+        expansion: "Project management that plans itself",
         url: "https://proman.cotek.app",
-        what: "Project management for small teams.",
+        what: "A calmer project workspace for teams that ship — it plans the work, writes the update, and gets out of the way.",
       },
       {
-        name: "Sci-Cotek",
-        url: "https://sci.cotek.app",
-        what: "Environmental science data analysis with a live API.",
+        name: "ExTraP",
+        expansion: "Exploring Travellers Platform",
+        url: "https://extrap.cotek.app",
+        what: "Restaurants, ruins, hot springs, hidden waterfalls — every dot on the map, every receipt, every photo, in one paper-feel workspace.",
       },
       {
-        name: "BMS",
-        url: "https://bms.cotek.app",
-        what: "Business management.",
+        name: "Oyun",
+        expansion: "Yoruba: pregnancy, the womb",
+        url: "https://oyun.cotek.app",
+        what: "A Christian companion from conception through a child's first two years, written for an expectant mother and the person walking beside her.",
       },
       {
-        name: "Poems",
+        name: "Ìdílé",
+        expansion: "Yoruba: the household, the family line",
+        url: "https://idile.cotek.app",
+        what: "Daily family worship, children's catechism and Scripture memory for the whole covenant household — with or without children.",
+      },
+      {
+        name: "Bene",
+        expansion: "Church benevolence, kept faithfully",
+        url: "https://bene.cotek.app",
+        what: "Benevolence requests, discernment, approvals and receipts — held in one confidential record that belongs to the church.",
+      },
+      {
+        name: "StEP",
+        expansion: "Student Essentials Platform",
+        url: "https://step.cotek.app",
+        what: "Notes that save themselves, references in Harvard, APA or MLA, assignments, courses and study time — for Bachelor through PhD.",
+      },
+      {
+        name: "Oluko",
+        expansion: "Yoruba: the teacher",
+        url: "https://oluko.cotek.app",
+        what: "A training and education platform whose headline feature turns a single topic into a complete course — modules, lessons, quizzes and a graded exam.",
+      },
+      {
+        name: "Supremo",
+        expansion: "Zero commission. Real food. Fair deal.",
+        url: "https://supremo.tekapp.org",
+        what: "Food delivery and table booking where restaurants pay a flat monthly fee instead of 20–30% of every order.",
+      },
+      {
+        name: "Poetry",
+        expansion: "Poetry by Cotek",
         url: "https://poems.cotek.app",
-        what: "A library of his lines.",
-      },
-      {
-        name: "exp",
-        url: "https://exp.cotek.live",
-        what: "A household ledger.",
+        what: "A read-only poetry garden: wander by constellation, search by title, or let a random pilgrimage choose your next horizon.",
       },
     ],
     // The "Life vs Love" trilogy plus The Cerulean Monster.
@@ -189,23 +228,24 @@ export const TEMI = {
   location: "Ras Al Khaimah, United Arab Emirates",
 } as const;
 
-// Subdomains the status pinger watches.
-export const COTEK_SUBDOMAINS: Array<{ key: string; url: string }> = [
-  { key: "POEMS", url: "https://poems.cotek.app" },
-  { key: "EXP", url: "https://exp.cotek.live" },
-  { key: "PEXP", url: "https://pexp.cotek.app" },
-  { key: "PROMAN", url: "https://proman.cotek.app" },
-  { key: "SCI", url: "https://sci.cotek.app" },
-  { key: "BMS", url: "https://bms.cotek.app" },
-];
+/*
+  What the status pinger watches.
 
-// Routes — used by the constellation, the keyboard console, and the sitemap.
-export const ROOMS = [
-  { slug: "apps", title: "Apps", count: 7, weight: 1.1 },
-  { slug: "books", title: "Books", count: 1, weight: 0.9 },
-  { slug: "poems", title: "Poems", count: 0, weight: 1.0 },
-  { slug: "research", title: "Research", count: 0, weight: 0.85 },
-  { slug: "sermons", title: "Sermons", count: 0, weight: 1.05 },
-  { slug: "photos", title: "Photos", count: 0, weight: 1.0 },
-  { slug: "field", title: "Field", count: 0, weight: 1.6 },
-] as const;
+  Derived from the portfolio rather than written down beside it. The previous
+  hand-kept list was still pinging sci, bms and exp long after they stopped
+  existing, which is the failure mode a second copy of a list always has.
+  A product added above is now watched automatically.
+*/
+export const COTEK_SUBDOMAINS: Array<{ key: string; url: string }> = TEMI.works.apps.map(
+  (a) => ({
+    // Ìdílé is the display name; the key is an identifier, and an identifier
+    // with combining accents in it is a thing that eventually breaks someone's
+    // dashboard. Decompose and drop the marks — cotek.live keeps a `plain`
+    // field for the same reason.
+    key: a.name
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "")
+      .toUpperCase(),
+    url: a.url,
+  }),
+);
